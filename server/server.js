@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import swaggerUI from 'swagger-ui-express';
 import BasicAuth from 'express-basic-auth';
+import mongoose from 'mongoose';
 
 import ResponseHandler from './utils/respone.js';
 import errorHandle from './utils/errorHandle.js';
@@ -11,7 +12,9 @@ import apis from './endpoint.js';
 import swaggerSpec from './docs.js';
 import logger from './logger.js';
 
-const { PORT, USER_API_DOCS, PASS_API_DOCS } = process.env;
+const {
+  PORT, USER_API_DOCS, PASS_API_DOCS, MONGO_URI
+} = process.env;
 
 const app = new Express();
 
@@ -42,6 +45,20 @@ app.use('/api-docs', BasicAuth({ users: { [USER_API_DOCS]: PASS_API_DOCS }, chal
 app.use('/', apis);
 
 app.use(errorHandle);
+
+mongoose
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(async (data) => {
+    logger.info('Mongodb connected');
+  })
+  .catch((error) => {
+    console.log(error);
+    logger.error('Please make sure Mongodb is installed and running!');
+    process.exit(1);
+  });
 
 const httpServer = http.createServer(app, (req, res) => {
   res.writeHead(200, {
