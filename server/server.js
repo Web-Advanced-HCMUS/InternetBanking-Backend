@@ -3,14 +3,15 @@ import http from 'http';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import swaggerUI from 'swagger-ui-express';
+import BasicAuth from 'express-basic-auth';
 
 import ResponseHandler from './utils/respone.js';
 import errorHandle from './utils/errorHandle.js';
-import apis from './endpoints.js';
+import apis from './endpoint.js';
 import swaggerSpec from './docs.js';
 import logger from './logger.js';
 
-const { PORT } = process.env;
+const { PORT, USER_API_DOCS, PASS_API_DOCS } = process.env;
 
 const app = new Express();
 
@@ -36,7 +37,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+app.use('/api-docs', BasicAuth({ users: { [USER_API_DOCS]: PASS_API_DOCS }, challenge: true }), swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.use('/', apis);
 
