@@ -174,6 +174,8 @@ export async function forgotPasswordService(username, otp, newPass) {
     const { _id } = hasOTP.userId;
     await UserInfoModel.findByIdAndUpdate(_id, { password: newPass });
 
+    await UserOTPModel.findByIdAndDelete(hasOTP._id);
+
     return true;
   } catch (error) {
     return errorMessage(500, error);
