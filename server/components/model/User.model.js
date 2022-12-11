@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const UserInfoSchema = new mongoose.Schema({
   username: { type: String },
   isActived: { type: Boolean, default: false },
-  role: { type: String, ref: 'RoleManagement' },
+  role: { type: String, ref: 'Role' },
   accountNumber: { type: String, require: true },
   password: { type: String, require: true },
   fullName: { type: String, require: true },

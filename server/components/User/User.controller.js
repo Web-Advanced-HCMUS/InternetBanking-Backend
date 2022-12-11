@@ -45,3 +45,37 @@ export async function getListUserController(req, res) {
     return res.RH.error(error);
   }
 }
+
+export async function sendMailForgotPasswordController(req, res) {
+  try {
+    const { username } = req.params;
+    const result = await UserInfoService.sendMailForgotPasswordService(username);
+
+    return res.RH.success(result);
+  } catch (error) {
+    return res.RH.error(error);
+  }
+}
+
+export async function forgotPasswordController(req, res) {
+  try {
+    const { username, otp, newPass } = req.body;
+    const result = await UserInfoService.forgotPasswordService(username, otp, newPass);
+
+    return res.RH.success(result);
+  } catch (error) {
+    return res.RH.error(error);
+  }
+}
+
+export async function changePasswordController(req, res) {
+  try {
+    const { oldPass, newPass } = req.body;
+    const { auth } = req;
+    const result = await UserInfoService.changePasswordService(auth, oldPass, newPass);
+
+    return res.RH.success(result);
+  } catch (error) {
+    return res.RH.error(error);
+  }
+}

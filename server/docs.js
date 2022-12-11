@@ -4,9 +4,9 @@ const { PORT } = process.env;
 
 const swaggerDefinition = {
   info: {
-    title: 'SAKILA',
+    title: 'INTERNET BANKNG',
     version: '1.0.0',
-    description: 'SAKILA HOMEWORK DOCS',
+    description: 'INTERNET BANKNG FINAL PROJECT DOCS',
   },
   host: `localhost:${PORT}`,
   basePath: '/',
@@ -25,9 +25,9 @@ const swaggerDefinition = {
 const options = {
   swaggerDefinition,
   apis: [
-    'src/components/**/*.route.js',
-    'src/components/**/*.docs.js',
-    'src/utils/validatorErrorHandler.js',
+    'server/components/**/*.route.js',
+    'server/components/**/*.docs.js',
+    'server/utils/validatorErrorHandler.js',
   ],
 };
 

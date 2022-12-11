@@ -9,7 +9,6 @@ const router = new Router();
 
 router.route('/create')
   .post(
-    isAdmin(),
     UserInfoValidator.getUserPassValidator,
     UserInfoValidator.getUserInfoValidator,
     UserInfoController.createUserController
@@ -21,7 +20,7 @@ router.route('/login')
     UserInfoController.userLoginController
   );
 
-router.route('/get-user-info')
+router.route('/get-user-info-by-token')
   .get(
     authorized(),
     UserInfoController.getUserInfoController
@@ -31,6 +30,22 @@ router.route('/get-list-user')
   .get(
     isAdmin(),
     UserInfoController.getListUserController
+  );
+
+router.route('/send-mail-forgot-pass/:username')
+  .post(
+    UserInfoController.sendMailForgotPasswordController
+  );
+
+router.route('/forgot-pass')
+  .post(
+    UserInfoController.forgotPasswordController
+  );
+
+router.route('/change-pass')
+  .put(
+    authorized(),
+    UserInfoController.changePasswordController
   );
 
 export default router;

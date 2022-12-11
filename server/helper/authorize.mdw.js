@@ -22,10 +22,10 @@ export function authorized() {
         return next(new APIError(401, { access: false, message: 'Unauthorized' }));
       }
 
-      const user = await UserModel.findOne({ username: userData?.username }, {
+      const user = await UserModel.findById(userData?.userId, {
         username: 1,
         role: 1
-      }).populate('role');
+      }).populate('role').lean();
 
       req.auth = user;
       if (!req.auth) return next(new APIError(401, { access: false, message: 'Unauthorized' }));
@@ -54,11 +54,11 @@ export function isAdmin() {
       const user = await UserModel.findOne({ username: userData?.username }, {
         username: 1,
         role: 1
-      }).populate('role');
+      }).populate('role').lean();
 
       req.auth = user;
       if (!req.auth) return next(new APIError(401, { access: false, message: 'Unauthorized' }));
-      if (req.auth?.role?.role !== 'ADMIN') {
+      if (req.auth?.role?._id !== 'ADMIN') {
         return next(new APIError(403, { access: false, message: 'Forbidden!' }));
       }
       return next();

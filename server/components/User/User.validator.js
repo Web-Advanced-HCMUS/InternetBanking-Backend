@@ -5,7 +5,7 @@ import { USER_ROLE, USER_GENDER } from '../../utils/constant.js';
 
 export const getUserPassValidator = [
   body('username').isString().notEmpty().withMessage('Username must be String!'),
-  body('password').isHash().withMessage('Password must be hashed String'),
+  body('password').isString().notEmpty().withMessage('Password must be String!'),
   validatorErrorHandler
 ];
 
@@ -16,7 +16,7 @@ export const getUserInfoValidator = [
   body('phone').isMobilePhone().withMessage('Invalid Phone number!'),
   body('dateOfBirth').isDate().withMessage('Invalid Date!'),
   body('email').isEmail().withMessage('Invalid Email!'),
-  body('identityCard').isIdentityCard().withMessage('Invalid Identity ID!'),
+  body('identityCard').isString().withMessage('Invalid Identity ID!'),
   body('address').isString().notEmpty().withMessage('Address must be String!'),
   validatorErrorHandler
 ];
