@@ -1,14 +1,16 @@
 import nodemailer from 'nodemailer';
 
+const { EMAIL_ACCOUNT, EMAIL_APP_PASS } = process.env;
+
 export const nodeMailerSendEmail = async (username, password, to, cc, subject, html, attachments) => {
   try {
     const transportSMTP = nodemailer.createTransport({
-      host: ,
-      port: ,
+      service: 'gmail',
+      host: 'stmp.gmail.com',
       secure: false,
       auth: {
-        user: username,
-        pass: password
+        user: EMAIL_ACCOUNT,
+        pass: EMAIL_APP_PASS
       },
       tls: { rejectUnauthorized: false }
     });

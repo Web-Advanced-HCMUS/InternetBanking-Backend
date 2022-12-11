@@ -32,4 +32,15 @@ export default class ResponseHandler {
       errors: error.errors,
     });
   }
+
+  paging([count = 0, data = []], page = 1, limit = 10) {
+    return this.res.status(200).json({
+      success: true,
+      totalPage: Math.ceil(count / limit),
+      totalItem: count,
+      page,
+      item: data.length,
+      payload: data
+    });
+  }
 }
