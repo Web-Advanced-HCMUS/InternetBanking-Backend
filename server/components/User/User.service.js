@@ -197,3 +197,14 @@ export async function changePasswordService(auth, oldPass, newPass) {
     return errorMessage(500, error);
   }
 }
+
+export async function getUserByAccountNumberService(accountNumber) {
+  try {
+    const hasUser = await UserInfoModel.findOne({ accountNumber }, { fullName: 1, accountNumber: 1 }).lean();
+    if (!hasUser) return errorMessage(404, 'NOT FOUND!');
+
+    return hasUser;
+  } catch (error) {
+    return errorMessage(500, error);
+  }
+}

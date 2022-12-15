@@ -48,4 +48,10 @@ router.route('/change-pass')
     UserInfoController.changePasswordController
   );
 
+router.route('/get-user-by-account-number/:accountNumber')
+  .get(
+    authorized(),
+    UserInfoController.getUserByAccountNumberController
+  );
+
 export default router;

@@ -1,6 +1,7 @@
 import * as UserInfoService from './User.service.js';
 
 import { pagingQuery } from '../../utils/pagingQueryHadle.js';
+import { errorMessage } from '../../utils/error.js';
 
 export async function createUserController(req, res) {
   try {
@@ -75,6 +76,17 @@ export async function changePasswordController(req, res) {
     const result = await UserInfoService.changePasswordService(auth, oldPass, newPass);
 
     return res.RH.success(result);
+  } catch (error) {
+    return res.RH.error(error);
+  }
+}
+
+export async function getUserByAccountNumberController(req, res) {
+  try {
+    const { accountNumber } = req.params;
+    const payload = await UserInfoService.getUserByAccountNumberService(accountNumber);
+
+    return res.RH.success(payload);
   } catch (error) {
     return res.RH.error(error);
   }
