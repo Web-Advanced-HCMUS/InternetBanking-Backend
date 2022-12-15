@@ -1,7 +1,6 @@
 import * as UserInfoService from './User.service.js';
 
 import { pagingQuery } from '../../utils/pagingQueryHadle.js';
-import { errorMessage } from '../../utils/error.js';
 
 export async function createUserController(req, res) {
   try {
@@ -9,6 +8,17 @@ export async function createUserController(req, res) {
     const payload = await UserInfoService.createUserService(body);
 
     return res.RH.success(payload);
+  } catch (error) {
+    return res.RH.error(error);
+  }
+}
+
+export async function createAccountOTPVerifyController(req, res) {
+  try {
+    const { userId, otp } = req.query;
+    const result = await UserInfoService.createAccountOTPVerifyService(userId, otp);
+
+    return res.RH.success(result);
   } catch (error) {
     return res.RH.error(error);
   }

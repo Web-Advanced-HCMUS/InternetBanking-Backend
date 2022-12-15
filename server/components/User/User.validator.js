@@ -1,7 +1,12 @@
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 import validatorErrorHandler from '../../utils/validatorErrorHandle.js';
 
 import { USER_ROLE, USER_GENDER } from '../../utils/constant.js';
+
+export const getUserIdValidator = [
+  query('userId').isMongoId().withMessage('User Id must be MongoId!'),
+  validatorErrorHandler
+];
 
 export const getUserPassValidator = [
   body('username').isString().notEmpty().withMessage('Username must be String!'),

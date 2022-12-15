@@ -14,6 +14,12 @@ router.route('/create')
     UserInfoController.createUserController
   );
 
+router.route('/verify-account')
+  .post(
+    UserInfoValidator.getUserIdValidator,
+    UserInfoController.createAccountOTPVerifyController
+  );
+
 router.route('/login')
   .post(
     UserInfoValidator.getUserPassValidator,

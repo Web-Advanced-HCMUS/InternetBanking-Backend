@@ -2,7 +2,7 @@
  * @swagger
  * /user/create:
  *   post:
- *     summary: Tạo Tài khoản
+ *     summary: Tạo Tài khoản, sau khi gửi thông tin đi sẽ nhận được Email OTP
  *     tags:
  *       - User Info
  *     parameters:
@@ -42,6 +42,58 @@
  *           "identityCard": "3874295817",
  *           "address": "221B, Baker street"
  *         }
+ *     responses:
+ *       200:
+ *         name: body
+ *         in: body
+ *         required: true
+ *         description: data report
+ *         schema:
+ *           type: object
+ *           properties:
+ *             $ref: '#/definitions/dashboard'
+ *           example: {
+ *              success: true
+ *           }
+ *       404:
+ *         description: When data cannot be process
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               $ref: '#/definitions/ValidatorErrorItem'
+ *           example: {
+ *             success: false,
+ *             errors: {
+ *                 "param": "EXISTS",
+ *               }
+ *           }
+ *       500:
+ *         description: When got server exception
+ *         schema:
+ *           type: string
+ *           example: "Internal server error"
+ */
+
+/**
+ * @swagger
+ * /user/verify-account:
+ *   post:
+ *     summary: Xác thực tài khoản bàng OTP nhận qua Email (Step 2)
+ *     tags:
+ *       - User Info
+ *     parameters:
+ *       - name: userId
+ *         in: query
+ *         required: true
+ *         description: Id Account người dùng
+ *         type: MongoId
+ *       - name: otp
+ *         in: query
+ *         required: true
+ *         description: Mã OTP nhận được từ Email
+ *         type: String
  *     responses:
  *       200:
  *         name: body

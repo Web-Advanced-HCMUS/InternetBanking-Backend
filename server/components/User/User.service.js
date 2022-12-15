@@ -11,6 +11,7 @@ import { nodeMailerSendEmail } from '../../helper/mailer.js';
 import { USER_ROLE, USER_GENDER } from '../../utils/constant.js';
 
 import { recoverPasswordMail } from '../../utils/mailTemplate/recoveryPassword.mailTemplate.js';
+import { createAccountOTPMail } from '../../utils/mailTemplate/createAccount.mailTemplate.js';
 
 const { ACCESS_KEY, REFRESH_KEY } = process.env;
 
@@ -73,9 +74,40 @@ export async function createUserService(body) {
       accountNumber
     };
 
-    await UserInfoModel.create(newUser);
+    const createdUser = await UserInfoModel.create(newUser);
+    const userId = createdUser?._id;
 
-    return accountNumber;
+    // Generate OTP
+    const otp = await generateOTPService(userId, 'Verify Account');
+
+    await nodeMailerSendEmail(
+      'Banking Recovery Auto Mail',
+      email,
+      null,
+      'Create Account Confirmation OTP',
+      createAccountOTPMail(body?.fullName, otp)
+    );
+
+    return { userId, accountNumber };
+  } catch (error) {
+    return errorMessage(500, error);
+  }
+}
+
+export async function createAccountOTPVerifyService(userId, otp) {
+  try {
+    const findOTP = await UserOTPModel.findOne({ _id: userId, otp });
+    if (!findOTP) return errorMessage(405, 'WRONG OTP!');
+
+    const currentTime = moment();
+    if (currentTime > findOTP?.expiredTime) return errorMessage(405, 'OTP EXPIRED!');
+
+    await Promise.all([
+      UserInfoModel.findByIdAndUpdate(userId, { isActived: true }),
+      UserOTPModel.findByIdAndDelete(findOTP?._id)
+    ]);
+
+    return true;
   } catch (error) {
     return errorMessage(500, error);
   }
