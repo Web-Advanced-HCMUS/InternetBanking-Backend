@@ -2,7 +2,7 @@
  * @swagger
  * /user/create:
  *   post:
- *     summary: Tạo Tài khoản, sau khi gửi thông tin đi sẽ nhận được Email OTP
+ *     summary: Tạo Tài khoản, sau khi gửi thông tin đi sẽ nhận được Email OTP (Step 1)
  *     tags:
  *       - User Info
  *     parameters:
@@ -79,7 +79,7 @@
 /**
  * @swagger
  * /user/verify-account:
- *   post:
+ *   get:
  *     summary: Xác thực tài khoản bàng OTP nhận qua Email (Step 2)
  *     tags:
  *       - User Info
@@ -435,7 +435,7 @@
  * @swagger
  * /user/get-user-by-account-number/{accountNumber}:
  *   get:
- *     summary: Lấy thông tin người dùng từ số tài khoảng
+ *     summary: Lấy thông tin người dùng từ số tài khoản
  *     tags:
  *       - User Info
  *     parameters:
