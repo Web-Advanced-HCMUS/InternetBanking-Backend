@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
 
-import { DEBT_STATUS } from '../../utils/constant.js';
+import { DEBT_STATUS, DEBT_TYPE } from '../../utils/constant.js';
 
 const DebtSchema = new mongoose.Schema({
   userId: { type: mongoose.Types.ObjectId, ref: 'UserInfo', require: true },
-  debtorId: { type: mongoose.Types.ObjectId, ref: 'UserInfo', require: true },
+  otherUserId: { type: mongoose.Types.ObjectId, ref: 'UserInfo', require: true },
   amountOwed: { type: Number, require: true },
-  debtType: { type: String, require: true },
-  status: { type: String, default: DEBT_STATUS.unpaid },
-  startDate: { type: Date, default: new Date() },
+  debtType: { type: String, enum: Object.values(DEBT_TYPE), require: true },
+  status: { type: String, enum: Object.values(DEBT_STATUS), default: DEBT_STATUS.unpaid, require: true },
+  startDate: { type: Date, default: new Date(), require: true },
   endDate: { type: Date, require: true }
-}, { collection: 'Debt', versionKey: false });
+}, { collection: 'Debts', versionKey: false });
 
 export default mongoose.model('Debt', DebtSchema);

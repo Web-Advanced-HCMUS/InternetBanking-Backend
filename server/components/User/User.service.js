@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { errorMessage } from '../../utils/error.js';
 
-import UserInfoModel from '../model/User.model.js';
+import UserInfoModel from '../model/UserInfo.model.js';
 import UserOTPModel from '../model/UserOTP.model.js';
 
 import { nodeMailerSendEmail } from '../../helper/mailer.js';
