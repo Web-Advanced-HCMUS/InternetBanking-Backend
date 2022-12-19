@@ -8,3 +8,8 @@ export const USER_GENDER = {
   female: 'FEMALE',
   else: 'ELSE'
 };
+
+export const DEBT_STATUS = {
+  unpaid: 'UNCOMPLETE',
+  paid: 'COMPLETE'
+};
