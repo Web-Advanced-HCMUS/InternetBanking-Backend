@@ -1,6 +1,6 @@
 export const USER_ROLE = {
-  client: 'CUSTOMER',
-  admin: 'ADMIN'
+  client: 'customer',
+  admin: 'admin'
 };
 
 export const USER_MODEL_TYPE = {
@@ -9,27 +9,27 @@ export const USER_MODEL_TYPE = {
 };
 
 export const USER_GENDER = {
-  male: 'MALE',
-  female: 'FEMALE',
-  else: 'ELSE'
+  male: 'male',
+  female: 'female',
+  else: 'else'
 };
 
 export const DEBT_STATUS = {
-  unpaid: 'INCOMPLETE',
-  paid: 'COMPLETE'
+  unpaid: 'incomplete',
+  paid: 'complete'
 };
 
 export const DEBT_TYPE = {
-  creditor: 'CREDITOR',
-  debtor: 'DEBTOR'
+  creditor: 'creditor',
+  debtor: 'debtor'
 };
 
 export const TRANSACTION_TYPE = {
-  unpaid: 'INTERNAL',
-  paid: 'INTERBANK'
+  unpaid: 'internal',
+  paid: 'interbank'
 };
 
 export const ACCOUNT_TYPE = {
-  payment: 'PAYMENT',
-  saving: 'SAVING'
+  payment: 'payment',
+  saving: 'saving'
 };
