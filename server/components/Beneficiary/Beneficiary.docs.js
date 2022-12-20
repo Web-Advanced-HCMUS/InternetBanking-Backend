@@ -19,7 +19,7 @@
  *          userId:
  *              type: number
  *              description: The username which beneficiary belongs to
- *          remindedName:
+ *          reminiscentName:
  *              type: string
  *              description: Name of beneficiary
  *          accountNumber:
@@ -31,7 +31,7 @@
  *      example:
  *          _id: 6395aba603c3f5e85cb44cd5
  *          userId: 6395c4ea26eb1ecbf4c629c4
- *          remindedName: Antoine Griezmann
+ *          reminiscentName: Antoine Griezmann
  *          accountNumber: 20060214213433000
  *          type: internal
  *
@@ -44,7 +44,7 @@
  *          userId:
  *              type: string
  *              description: The _id of user which beneficiary belongs to
- *          remindedName:
+ *          reminiscentName:
  *              type: string
  *              description: Name of beneficiary
  *          accountNumber:
@@ -55,7 +55,7 @@
  *              description: Type of transaction
  *      example:
  *          userId: 6395c4ea26eb1ecbf4c629c4
- *          remindedName: Antoine Griezmann
+ *          reminiscentName: Antoine Griezmann
  *          accountNumber: 20060214213433000
  *          type: internal
  */
@@ -87,12 +87,12 @@
  *                          payload:
  *                              - _id: 6395aba603c3f5e85cb44cd5
  *                                userId: 6395c4ea26eb1ecbf4c629c4
- *                                remindedName: Antoine Griezmann
+ *                                reminiscentName: Antoine Griezmann
  *                                accountNumber: 20060214213433000
  *                                type: internal
  *                              - _id: 6395aba603c3f5e85cb44c3dd
  *                                userId: 6395c4ea26eb1ecbf4c629c4
- *                                remindedName: Paulo Dybala
+ *                                reminiscentName: Paulo Dybala
  *                                accountNumber: 2006024772822022
  *                                type: interbank
  *                                interBank: 6395aba603c3f5e834d4c3dd
@@ -131,7 +131,7 @@
  *                      type: object
  *                example:
  *                  userId: 6395c4ea26eb1ecbf4c629c4
- *                  remindedName: Antoine Griezmann
+ *                  reminiscentName: Antoine Griezmann
  *                  accountNumber: 20060214213433000
  *                  type: internal
  *          responses:
@@ -146,7 +146,7 @@
  *                          payload:
  *                              _id: 6395aba603c3f5e85cb44cd6
  *                              userId: 6395c4ea26eb1ecbf4c629c4
- *                              remindedName: Antoine Griezmann
+ *                              reminiscentName: Antoine Griezmann
  *                              accountNumber: 20060214213433000
  *                              type: internal
  *              404:
@@ -187,12 +187,12 @@
  *                properties:
  *                  username:
  *                      type: string
- *                  remindedName:
+ *                  reminiscentName:
  *                      type: string
  *                  accountNumber:
  *                      type: string
  *                example:
- *                  remindedName: Paulo Dybala
+ *                  reminiscentName: Paulo Dybala
  *                  accountNumber: 20060214213433000
  *                  type: 'internal'
  *          responses:

@@ -3,9 +3,9 @@ import { errorMessage } from '../../utils/error.js';
 
 import BeneficiaryModel from '../model/Beneficiary.model.js';
 
-export async function getList(_id) {
+export async function getList(customerId) {
   try {
-    return await BeneficiaryModel.find({ customerId: _id });
+    return await BeneficiaryModel.find({ customerId });
   } catch (error) {
     return errorMessage(500, error);
   }

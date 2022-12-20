@@ -2,7 +2,7 @@ import * as BeneficiaryService from './Beneficiary.service.js';
 
 export async function getListBeneficiary(req, res) {
     try {
-        const data = await BeneficiaryService.getList(req.params.id);
+        const data = await BeneficiaryService.getList(req.params.customerId);
 
         return res.RH.success(data);
     } catch (error) {
