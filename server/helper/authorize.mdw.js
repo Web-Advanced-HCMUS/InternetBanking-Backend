@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import APIError from '../utils/APIError.js';
 
-import UserModel from '../components/model/User.model.js';
+import UserModel from '../components/model/UserInfo.model.js';
 
 const { ACCESS_KEY } = process.env;
 

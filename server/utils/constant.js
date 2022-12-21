@@ -1,15 +1,53 @@
 export const USER_ROLE = {
-  client: 'CLIENT',
-  admin: 'ADMIN'
+  CLIENT: 'customer',
+  ADMIN: 'admin'
+};
+
+export const USER_MODEL_TYPE = {
+  USER: 'UserInfo',
+  EMPLOYEE: 'Employee'
 };
 
 export const USER_GENDER = {
-  male: 'MALE',
-  female: 'FEMALE',
-  else: 'ELSE'
+  MALE: 'male',
+  FEMALE: 'female',
+  ELSE: 'else'
 };
 
 export const DEBT_STATUS = {
-  unpaid: 'UNCOMPLETE',
-  paid: 'COMPLETE'
+  INCOMPLETE: 'incomplete',
+  COMPLETE: 'complete'
+};
+
+export const DEBT_TYPE = {
+  CREDITOR: 'creditor',
+  DEBTOR: 'debtor'
+};
+
+export const TRANSFER_TYPE = {
+  INTERNAL: 'internal',
+  INTERBANK: 'interbank'
+};
+
+export const TRANSACTION_TYPE = {
+  DEPOSIT: 'deposit',
+  RECEIVE_TRANSFER: 'receive-transfer',
+  SPEND_TRANSFER: 'spend-transfer',
+  PAY_DEBT: 'pay-debt',
+  RECEIVE_DEBT_PAYMENT: 'receive-debt-payment'
+};
+
+export const FEE_PAID_TYPE = {
+  PAID_SENDER: 'paid sender',
+  PAID_RECEIVER: 'paid receiver'
+};
+
+export const ACCOUNT_TYPE = {
+  PAYMENT: 'payment',
+  SAVING: 'saving'
+};
+
+export const OTP_STATUS = {
+  PENDING: 'pending',
+  CONFIRM: 'confirmed'
 };

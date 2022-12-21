@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 const InterBankSchema = new mongoose.Schema({
   bankName: { type: String, require: true },
   secretKey: { type: String, require: true },
-  queryAPI: { type: Object, require: true },
-  transfertAPI: { type: Object, rqeuire: true }
-}, { collection: 'InterBank', versionKey: false });
+  queryAPI: { type: String, require: true },
+  transferAPI: { type: String, require: true }
+}, { collection: 'Interbank', versionKey: false });
 
-export default mongoose.model('InterBank', InterBankSchema);
+export default mongoose.model('Interbank', InterBankSchema);

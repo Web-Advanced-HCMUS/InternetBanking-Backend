@@ -1,14 +1,17 @@
 import mongoose from 'mongoose';
+import { TRANSACTION_TYPE } from '../../utils/constant.js';
 
 const TransactionSchema = new mongoose.Schema({
-  userId: { type: mongoose.Types.ObjectId, ref: 'UserInfo', require: true },
-  type: { type: String, require: true },
-  receiverAccountNumbe: { type: String, require: true },
-  receiverName: { type: String, require: true },
+  accountNumber: { type: String, require: true },
+  date: { type: Date, default: Date.now(), require: true },
+  transactionType: { type: String, enum: Object.values(TRANSACTION_TYPE), require: true },
   amount: { type: Number, require: true },
+  fee: { type: Number, require: true },
   content: { type: String, require: true },
-  interBank: { type: mongoose.Types.ObjectId, ref: 'InterBank', require: true },
-  newBalance: { type: Number, require: true },
-  status: { type: Boolean, require: true },
-  createDate: { type: Date, default: new Date() }
-}, {});
+  status: { type: String, require: true },
+  targetAccountOwnerName: { type: String, require: true },
+  targetAccountNumber: { type: String, require: true },
+  bankName: { type: String, require: true }
+}, { collection: 'Transactions', versionKey: false });
+
+export default mongoose.model('Transaction', TransactionSchema);

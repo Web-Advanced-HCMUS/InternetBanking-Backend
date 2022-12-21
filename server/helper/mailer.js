@@ -6,7 +6,7 @@ export const nodeMailerSendEmail = async (username, to, cc, subject, html, attac
   try {
     const transportSMTP = nodemailer.createTransport({
       service: 'gmail',
-      host: 'stmp.gmail.com',
+      host: 'smtp.gmail.com',
       secure: false,
       auth: {
         user: EMAIL_ACCOUNT,
@@ -27,6 +27,6 @@ export const nodeMailerSendEmail = async (username, to, cc, subject, html, attac
     await transportSMTP.sendMail(mailConfig);
     return true;
   } catch (error) {
-    return false;
+    return error;
   }
 };
