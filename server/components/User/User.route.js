@@ -15,7 +15,7 @@ router.route('/create')
   );
 
 router.route('/verify-account')
-  .post(
+  .get(
     UserInfoValidator.getUserIdValidator,
     UserInfoController.createAccountOTPVerifyController
   );

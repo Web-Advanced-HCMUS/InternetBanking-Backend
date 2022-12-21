@@ -1,6 +1,7 @@
-import * as UserInfoService from './User.service.js';
+// @ts-nocheck
+import * as UserInfoService from "./User.service.js";
 
-import { pagingQuery } from '../../utils/pagingQueryHadle.js';
+import { pagingQuery } from "../../utils/pagingQueryHadle.js";
 
 export async function createUserController(req, res) {
   try {
@@ -16,7 +17,10 @@ export async function createUserController(req, res) {
 export async function createAccountOTPVerifyController(req, res) {
   try {
     const { userId, otp } = req.query;
-    const result = await UserInfoService.createAccountOTPVerifyService(userId, otp);
+    const result = await UserInfoService.createAccountOTPVerifyService(
+      userId,
+      otp
+    );
 
     return res.RH.success(result);
   } catch (error) {
@@ -25,14 +29,15 @@ export async function createAccountOTPVerifyController(req, res) {
 }
 
 export async function userLoginController(req, res) {
-  try {
-    const { body } = req;
-    const result = await UserInfoService.userLoginService(body);
-
-    return res.RH.success(result);
-  } catch (error) {
-    return res.RH.error(error);
-  }
+  setTimeout(async () => {
+    try {
+      const { body } = req;
+      let result = await UserInfoService.userLoginService(body);
+      return res.RH.success(result);
+    } catch (error) {
+      return res.RH.error(error);
+    }
+  }, 2000);
 }
 
 export async function getUserInfoController(req, res) {
@@ -60,10 +65,13 @@ export async function getListUserController(req, res) {
 export async function sendMailForgotPasswordController(req, res) {
   try {
     const { username } = req.params;
-    const result = await UserInfoService.sendMailForgotPasswordService(username);
+    const result = await UserInfoService.sendMailForgotPasswordService(
+      username
+    );
 
     return res.RH.success(result);
   } catch (error) {
+    console.log(error);
     return res.RH.error(error);
   }
 }
@@ -71,7 +79,11 @@ export async function sendMailForgotPasswordController(req, res) {
 export async function forgotPasswordController(req, res) {
   try {
     const { username, otp, newPass } = req.body;
-    const result = await UserInfoService.forgotPasswordService(username, otp, newPass);
+    const result = await UserInfoService.forgotPasswordService(
+      username,
+      otp,
+      newPass
+    );
 
     return res.RH.success(result);
   } catch (error) {
@@ -83,7 +95,11 @@ export async function changePasswordController(req, res) {
   try {
     const { oldPass, newPass } = req.body;
     const { auth } = req;
-    const result = await UserInfoService.changePasswordService(auth, oldPass, newPass);
+    const result = await UserInfoService.changePasswordService(
+      auth,
+      oldPass,
+      newPass
+    );
 
     return res.RH.success(result);
   } catch (error) {
@@ -94,7 +110,9 @@ export async function changePasswordController(req, res) {
 export async function getUserByAccountNumberController(req, res) {
   try {
     const { accountNumber } = req.params;
-    const payload = await UserInfoService.getUserByAccountNumberService(accountNumber);
+    const payload = await UserInfoService.getUserByAccountNumberService(
+      accountNumber
+    );
 
     return res.RH.success(payload);
   } catch (error) {
