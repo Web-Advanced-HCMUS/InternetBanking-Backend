@@ -16,6 +16,6 @@ REFRESH_KEY=38e5402ab1e6d82743742084c93ca0ef7e053225310469a1ee5aa0a79cf2ecd8f5fd
 MAILING_SERVICE_CLIENT_ID = 590979302974-bj1rbnlp9gmcj0vsvktis6ut2b5hshqd.apps.googleusercontent.com
 MAILING_SERVICE_CLIENT_SECRET = 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
 MAILING_SERVICE_REFRESH_TOKEN = 1//04e51odwQqRSzCgYIARAAGAQSNwF-L9IrOWMPuKWDGvlSNymfqzQge7Mnq6spr9fbZ2EcMSqL150YgI9yujx6MQuSWWHS2qJd1xo
-# Note: the refresh token will be exprired after 7 days
+# Note: the refresh token will be expired after 7 days
 SENDER_EMAIL_ADDRESS = timodigitalbankn01@gmail.com
 ```
