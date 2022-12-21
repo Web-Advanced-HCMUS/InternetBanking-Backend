@@ -34,13 +34,14 @@
  *           "username": "Huynh",
  *           "password": "hashed password",
  *           "fullName": "A Full Name",
- *           "role": "CLIENT",
- *           "gender": "male/female/else",
+ *           "role": "CLIENT/ADMIN/EMPLOYEE",
+ *           "gender": "MALE/FEMALE/ELSE",
  *           "phone": "0989283746",
  *           "dateOfBirth": "1988/01/20",
  *           "email": "duahde@gmail.com",
  *           "identityCard": "3874295817",
- *           "address": "221B, Baker street"
+ *           "address": "221B, Baker street",
+ *           "accountType": "USER/EMPLOYEE"
  *         }
  *     responses:
  *       200:

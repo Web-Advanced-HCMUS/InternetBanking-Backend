@@ -1,7 +1,6 @@
-// @ts-nocheck
-import * as UserInfoService from "./User.service.js";
+import * as UserInfoService from './User.service.js';
 
-import { pagingQuery } from "../../utils/pagingQueryHadle.js";
+import { pagingQuery } from '../../utils/pagingQueryHadle.js';
 
 export async function createUserController(req, res) {
   try {
@@ -32,7 +31,7 @@ export async function userLoginController(req, res) {
   setTimeout(async () => {
     try {
       const { body } = req;
-      let result = await UserInfoService.userLoginService(body);
+      const result = await UserInfoService.userLoginService(body);
       return res.RH.success(result);
     } catch (error) {
       return res.RH.error(error);
@@ -71,7 +70,6 @@ export async function sendMailForgotPasswordController(req, res) {
 
     return res.RH.success(result);
   } catch (error) {
-    console.log(error);
     return res.RH.error(error);
   }
 }

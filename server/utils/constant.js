@@ -1,6 +1,7 @@
 export const USER_ROLE = {
-  CLIENT: 'customer',
-  ADMIN: 'admin'
+  CLIENT: 'CLIENT',
+  EMPLOYEE: 'EMPLOYEE',
+  ADMIN: 'ADMIN'
 };
 
 export const USER_MODEL_TYPE = {
