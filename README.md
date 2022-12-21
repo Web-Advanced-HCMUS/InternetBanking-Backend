@@ -1,7 +1,7 @@
 # InternetBanking
 .env
 
-``
+```
 MONGO_URI='mongodb+srv://leleeeee:DesertEagle1801@cluster0.afe0o.mongodb.net/test'
 PORT=3000
 HOST=
@@ -18,4 +18,4 @@ MAILING_SERVICE_CLIENT_SECRET = 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
 MAILING_SERVICE_REFRESH_TOKEN = 1//04e51odwQqRSzCgYIARAAGAQSNwF-L9IrOWMPuKWDGvlSNymfqzQge7Mnq6spr9fbZ2EcMSqL150YgI9yujx6MQuSWWHS2qJd1xo
 # Note: the refresh token will be exprired after 7 days
 SENDER_EMAIL_ADDRESS = timodigitalbankn01@gmail.com
-``
+```
