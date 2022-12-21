@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import APIError from '../utils/APIError.js';
 
-import UserModel from '../components/model/UserInfo.model.js';
+import UserLoginModel from '../components/model/UserLogin.model.js';
 
 const { ACCESS_KEY } = process.env;
 
@@ -26,12 +26,14 @@ export function authorized() {
         );
       }
 
-      const user = await UserModel.findById(userData?.userId, {
-        username: 1,
-        role: 1,
-      });
+      const user = await UserLoginModel.findOne({ username: userData?.username }).populate('userId').lean();
+      const authUser = {
+        _id: user?._id,
+        username: user?.username,
+        role: user?.userId?.role
+      };
 
-      req.auth = user;
+      req.auth = authUser;
       if (!req.auth) {
         return next(
           new APIError(401, { access: false, message: 'Unauthorized' })
@@ -63,23 +65,20 @@ export function isAdmin() {
         );
       }
 
-      const user = await UserModel.findOne(
-        { username: userData?.username },
-        {
-          username: 1,
-          role: 1,
-        }
-      )
-        .populate('role')
-        .lean();
+      const user = await UserLoginModel.findOne({ username: userData?.username }).populate('userId').lean();
+      const authUser = {
+        _id: user?._id,
+        username: user?.username,
+        role: user?.userId?.role
+      };
 
-      req.auth = user;
+      req.auth = authUser;
       if (!req.auth) {
- return next(
+        return next(
           new APIError(401, { access: false, message: 'Unauthorized' })
         );
-}
-      if (req.auth?.role?._id !== 'ADMIN') {
+      }
+      if (req.auth?.role !== 'ADMIN') {
         return next(
           new APIError(403, { access: false, message: 'Forbidden!' })
         );
