@@ -3,6 +3,9 @@ import jwt from 'jsonwebtoken';
 import APIError from '../utils/APIError.js';
 
 import UserLoginModel from '../components/model/UserLogin.model.js';
+import InterbankModel from '../components/model/InterBank.model.js';
+
+import { genHmac } from './signHmac.js';
 
 const { ACCESS_KEY } = process.env;
 
@@ -86,5 +89,40 @@ export function isAdmin() {
       return next();
     }
     return next(new APIError(401, { access: false, message: 'Unauthorized' }));
+  };
+}
+
+export function verifyTokenUsingSecretKey() {
+  return async (req, res, next) => {
+    const { time, hmac, bankCode } = req.query;
+
+    if (!time || !hmac) {
+      next(
+          new APIError(400, 'bad request')
+      );
+    }
+
+    const differentTime = Math.floor(Date.now() - time);
+    if (differentTime > process.env.TIME_EXPIRED) {
+      next(
+          new APIError(401, 'token expired')
+      );
+    }
+
+    const { secretKey } = await InterbankModel.findOne({ code: bankCode });
+    if (!secretKey) {
+      next(
+        new APIError(401, 'bank is not exist in system')
+      );
+    }
+
+    const signServer = genHmac(req.query, secretKey);
+    if (signServer !== hmac) {
+      next(
+        new APIError(401, 'token invalid')
+      );
+    }
+
+    next();
   };
 }
