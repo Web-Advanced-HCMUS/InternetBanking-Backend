@@ -1,31 +1,23 @@
 import * as TransactionService from './Transaction.service.js';
 
-export async function getOTP(req, res) {
-    try {
-        const data = await TransactionService.sendOTP(req.body.userId, req.body.amount);
-
-        return res.RH.success(data);
-    } catch (error) {
-        return res.RH.error(error);
-    }
-}
-
-export async function getListTransaction(req, res) {
+export async function getListTransaction(req, res, next) {
     try {
         const data = await TransactionService.getList(req.params.accountNumber);
 
         return res.RH.success(data);
     } catch (error) {
-        return res.RH.error(error);
+        next(error);
     }
 }
 
-export async function insertOneTransaction(req, res) {
+export async function insertOneTransaction(req, res, next) {
     try {
-        const data = await TransactionService.verifyTransaction(req);
+        const requestBody = await TransactionService.verifyTransaction(req.body);
+
+        const data = await TransactionService.createInternalTransaction(requestBody);
 
         return res.RH.success(data);
     } catch (error) {
-        return res.RH.error(error);
+        next(error);
     }
 }

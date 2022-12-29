@@ -1,116 +1,124 @@
-import mongoose from 'mongoose';
-import { errorMessage } from '../../utils/error.js';
-
 import TransactionModel from '../model/Transaction.model.js';
-import UserInfoModel from '../model/UserInfo.model.js';
-import AccountModel from '../model/Account.model.js';
+import * as AccountService from '../Account/Account.service.js';
 import * as OTPService from '../OTP/OTP.service.js';
-
-import { FEE_PAID_TYPE, TRANSACTION_TYPE } from '../../utils/constant.js';
+import APIError from '../../utils/APIError.js';
+import { HandleRequest } from '../../utils/HandleRequest.js';
+import {
+ BANK, FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE
+} from '../../utils/constant.js';
 
 export async function getList(accountNumber) {
   try {
     return await TransactionModel.find({ accountNumber });
   } catch (error) {
-    return errorMessage(500, error);
+    throw new APIError(error.statusCode || error.code || 500, error.message);
   }
 }
 
-export async function sendOTP(userId, amount) {
+export async function createInterbankTransaction(data, signature) {
   try {
-    const user = await UserInfoModel.findOne({ _id: userId });
-
-    if (!user) return errorMessage(405, "Can't find user");
-
-    const data = await OTPService.getTransactionOTP(user._id, 2);
-
-    await OTPService.sendTransactionOTPEmail(data.otp, amount, user.email);
-
-    return { message: 'OTP sent successfully' };
-  } catch (error) {
-    return errorMessage(500, error);
-  }
-}
-
-export async function verifyTransaction(req) {
-  try {
-    const {
- userId, otp, feePaymentMethod, transaction
-} = req.body;
-
-    const isValidOtp = await OTPService.verifyOTP(userId, otp);
-
-    if (!isValidOtp) return isValidOtp;
-
-    const isValidBalance = await checkBalanceAfterSpend(transaction.accountNumber, transaction.amount, transaction.fee);
-
-    if (!isValidBalance) return errorMessage(405, 'Your account does not have enough balance to make a transaction');
-
     const acceptTransaction = {
-      ...transaction,
-      accountId: new mongoose.Types.ObjectId(transaction.accountId),
-      status: 'completed'
+      ...data,
+      status: TRANSACTION_STATUS.SUCCESS,
+      bankName: data.bankCode,
+      signature
     };
 
-    const data = await acceptSenderTransaction(acceptTransaction, feePaymentMethod);
-    await acceptReceiverTransaction(acceptTransaction, feePaymentMethod);
+    const [err, receiverTransaction] = await HandleRequest(acceptReceiverTransaction(acceptTransaction));
+    if (err) throw new APIError(err.statusCode, err.message);
 
-    return { data };
+    return { transaction: receiverTransaction };
   } catch (error) {
-    return errorMessage(500, error);
+    throw new APIError(error.statusCode || error.code || 500, error.message);
   }
 }
 
-async function acceptSenderTransaction(acceptTransaction, feePaymentMethod) {
-  const senderTransaction = {
-    ...acceptTransaction,
-    fee: feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? acceptTransaction.fee : 0
-  };
+export async function createInternalTransaction(data) {
+    try {
+      const acceptTransaction = {
+        ...data,
+        status: TRANSACTION_STATUS.SUCCESS,
+        bankName: BANK.CODE
+      };
 
-  await subtractMoneyFromAccount(senderTransaction.accountNumber, senderTransaction.amount + senderTransaction.fee);
+      const [err1, senderTransaction] = await HandleRequest(acceptSenderTransaction({
+        ...acceptTransaction,
+        fee: data.feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? acceptTransaction.fee : 0
+      }));
+      if (err1) throw new APIError(err1.statusCode, err1.message);
 
-  return await TransactionModel.create(senderTransaction);
+      const [err2, receiverTransaction] = await HandleRequest(acceptReceiverTransaction({
+        ...acceptTransaction,
+        transactionType: TRANSACTION_TYPE.RECEIVE_TRANSFER,
+        fee: data.feePaymentMethod === FEE_PAID_TYPE.PAID_RECEIVER ? acceptTransaction.fee : 0
+      }));
+      if (err2) throw new APIError(err1.statusCode, err1.message);
+
+      return { transaction: senderTransaction };
+    } catch (error) {
+      throw new APIError(error.statusCode || error.code || 500, error.message);
+    }
 }
 
-async function acceptReceiverTransaction(acceptTransaction, feePaymentMethod) {
-  const targetAccount = await AccountModel.findOne({ accountNumber: acceptTransaction.accountNumber });
+export async function verifyTransaction(data) {
+  try {
+    const { userId, otp, fromAccountNumber, toAccountNumber, amount, fee } = data;
 
-  const receiverTransaction = {
-    ...acceptTransaction,
-    accountNumber: acceptTransaction.targetAccountNumber,
-    transactionType: TRANSACTION_TYPE.RECEIVE_TRANSFER,
-    fee: feePaymentMethod === FEE_PAID_TYPE.PAID_RECEIVER ? acceptTransaction.fee : 0,
-    targetAccountOwnerName: targetAccount.accountOwnerName,
-    targetAccountNumber: targetAccount.accountNumber
-  };
+    const [err1, isSuccess] = await HandleRequest(OTPService.verifyOTP(userId, otp));
+    if (err1) throw new APIError(err1.statusCode, err1.message);
 
-  await addMoneyToAccount(receiverTransaction.accountNumber, receiverTransaction.amount - receiverTransaction.fee);
+    const [err2, account] = await HandleRequest(AccountService.getAccount(toAccountNumber));
+    if (err2) throw new APIError(err2.statusCode, err2.message);
+    if (account === null) throw new APIError(200, 'Target account number does not exist in system');
 
-  return await TransactionModel.create(receiverTransaction);
+    const [err3, isValidBalance] = await HandleRequest(AccountService.checkBalanceAfterSpend(fromAccountNumber, amount, fee));
+    if (err3) throw new APIError(err3.statusCode, err3.message);
+    if (isValidBalance !== true) throw new APIError(200, 'Your account does not have enough balance to make a transaction');
+
+    return data;
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
 }
 
-async function checkBalanceAfterSpend(accountNumber, amount, fee) {
-  const account = await AccountModel.findOne({ accountNumber });
+async function acceptSenderTransaction(acceptTransaction) {
+  try {
+    const senderTransaction = {
+      ...acceptTransaction,
+      accountNumber: acceptTransaction.fromAccountNumber,
+      targetAccountNumber: acceptTransaction.toAccountNumber,
+      targetAccountOwnerName: acceptTransaction.toAccountOwnerName
+    };
 
-  return (account.currentBalance - amount - fee) > 0;
+    const [err, result] = await HandleRequest(AccountService.subtractMoneyFromAccount(
+      senderTransaction.accountNumber,
+      senderTransaction.amount + senderTransaction.fee
+    ));
+    if (err) throw new APIError(err.statusCode, err.message);
+
+    return await TransactionModel.create(senderTransaction);
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
 }
 
-async function addMoneyToAccount(accountNumber, amount) {
-  const account = await AccountModel.findOne({ accountNumber });
+async function acceptReceiverTransaction(acceptTransaction) {
+  try {
+    const receiverTransaction = {
+      ...acceptTransaction,
+      accountNumber: acceptTransaction.toAccountNumber,
+      targetAccountOwnerName: acceptTransaction.fromAccountOwnerName,
+      targetAccountNumber: acceptTransaction.fromAccountNumber
+    };
 
-  console.log('add', amount);
+    const [err, result] = await HandleRequest(AccountService.addMoneyToAccount(
+      receiverTransaction.accountNumber,
+      receiverTransaction.amount - receiverTransaction.fee
+    ));
+    if (err) throw new APIError(err.statusCode, err.message);
 
-  const { modifiedCount } = await AccountModel.updateOne({ accountNumber }, { $set: { currentBalance: account.currentBalance + amount } });
-
-  return modifiedCount === 1;
-}
-
-async function subtractMoneyFromAccount(accountNumber, amount) {
-  const account = await AccountModel.findOne({ accountNumber });
-
-  console.log('sub', amount);
-
-  const { modifiedCount } = await AccountModel.updateOne({ accountNumber }, { $set: { currentBalance: account.currentBalance - amount } });
-
-  return modifiedCount === 1;
+    return await TransactionModel.create(receiverTransaction);
+  } catch (error) {
+    throw new APIError(error.statusCode || 500, error.message);
+  }
 }
