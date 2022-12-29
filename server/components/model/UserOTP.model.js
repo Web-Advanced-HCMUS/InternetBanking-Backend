@@ -6,6 +6,6 @@ const UserOTPSchema = new mongoose.Schema({
   otp: { type: String },
   status: { type: String, enum: Object.values(OTP_STATUS) },
   expiredTime: { type: Date }
-}, { collection: 'UserOTPs', versionKey: false });
+}, { collection: 'UserOTP', versionKey: false });
 
 export default mongoose.model('UserOTP', UserOTPSchema);

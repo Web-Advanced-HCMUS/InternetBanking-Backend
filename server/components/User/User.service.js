@@ -22,8 +22,15 @@ const autoGenAccountNumber = () => `087${Math.floor(100000 + Math.random() * 900
 
 const generateAccessToken = (userData) => jwt.sign(userData, ACCESS_KEY, { expiresIn: '7d' });
 
-export const refreshTokenService = async (refreshToken) => {
+export const refreshTokenService = async (userId) => {
   try {
+    const userLogin = await UserLoginModel.findById(userId).lean();
+    if (!userLogin) return errorMessage(404, 'User not found!');
+
+    if (!userLogin?.refreshToken) return errorMessage(401, 'Unauthorized');
+
+    const { refreshToken } = userLogin;
+
     const user = jwt.verify(refreshToken, REFRESH_KEY);
     const accessToken = generateAccessToken(user);
 
@@ -178,21 +185,18 @@ export async function userLoginService(body) {
   try {
     const { username, password } = body;
 
-    const user = await UserInfoModel.findOne({ username });
+    const user = await UserLoginModel.findOne({ username }).populate('userId').lean();
 
     if (!user) return errorMessage(404, 'USER NOT FOUND!');
 
     if (!(user?.password === password)) return errorMessage(405, 'WRONG PASSWORD!');
 
-    if (!user?.isActivated) return errorMessage(405, 'UNACTIVED!');
+    if (!user?.userId?.isActivated) return errorMessage(405, 'UNACTIVED!');
 
-    const userData = {
-      userId: user?._id,
-      username: user?.username,
-    };
-    const token = generateAccessToken(userData);
+    const { _id } = user;
+    const token = generateAccessToken(_id);
 
-    return { token, userData };
+    return token;
   } catch (error) {
     return errorMessage(500, error);
   }
@@ -234,7 +238,7 @@ export async function getListUserService(skip, limit) {
 
 export async function sendMailForgotPasswordService(username) {
   try {
-    const hasUser = await UserInfoModel.findOne({ username }).lean();
+    const hasUser = await UserLoginModel.findOne({ username }).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
     const { fullName, email, _id } = hasUser;
