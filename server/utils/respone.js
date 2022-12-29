@@ -27,6 +27,7 @@ export default class ResponseHandler {
     if (!error.statusCode) {
       console.error(error.stack);
     }
+    console.log(error)
     return this.res.status(error.statusCode).json({
       success: false,
       errors: error.errors,
