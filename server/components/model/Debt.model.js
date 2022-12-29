@@ -7,7 +7,7 @@ const DebtSchema = new mongoose.Schema({
   otherUserId: { type: mongoose.Types.ObjectId, ref: 'UserInfo', require: true },
   amountOwed: { type: Number, require: true },
   debtType: { type: String, enum: Object.values(DEBT_TYPE), require: true },
-  status: { type: String, enum: Object.values(DEBT_STATUS), default: DEBT_STATUS.unpaid, require: true },
+  status: { type: String, enum: Object.values(DEBT_STATUS), default: DEBT_STATUS.INCOMPLETE, require: true },
   startDate: { type: Date, default: new Date(), require: true },
   endDate: { type: Date, require: true }
 }, { collection: 'Debts', versionKey: false });
