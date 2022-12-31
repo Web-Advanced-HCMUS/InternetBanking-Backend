@@ -2,6 +2,17 @@ import * as UserInfoService from './User.service.js';
 
 import { pagingQuery } from '../../utils/pagingQueryHadle.js';
 
+export async function refreshTokenController(req, res) {
+  try {
+    const { refreshToken, userId } = req.query;
+    const payload = await UserInfoService.refreshTokenService(userId, refreshToken);
+
+    return res.RH.success(payload);
+  } catch (error) {
+    return res.RH.error(error);
+  }
+}
+
 export async function createUserController(req, res) {
   try {
     const { body } = req;
@@ -28,15 +39,13 @@ export async function createAccountOTPVerifyController(req, res) {
 }
 
 export async function userLoginController(req, res) {
-  setTimeout(async () => {
-    try {
-      const { body } = req;
-      const result = await UserInfoService.userLoginService(body);
-      return res.RH.success(result);
-    } catch (error) {
-      return res.RH.error(error);
-    }
-  }, 2000);
+  try {
+    const { body } = req;
+    const result = await UserInfoService.userLoginService(body);
+    return res.RH.success(result);
+  } catch (error) {
+    return res.RH.error(error);
+  }
 }
 
 export async function getUserInfoController(req, res) {

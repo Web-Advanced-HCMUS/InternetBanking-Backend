@@ -1,5 +1,55 @@
 /**
  * @swagger
+ * /user/refresh-token:
+ *   post:
+ *     summary: Refresh Token khi Access Token hết hạn
+ *     tags:
+ *       - User Info
+ *     parameters:
+ *       - name: userId
+ *         in: query
+ *         type: Mongo Id
+ *         description: Id của người dùng
+ *       - name: refreshToken
+ *         in: query
+ *         type: String
+ *         description: refresh token
+ *     responses:
+ *       200:
+ *         name: body
+ *         in: body
+ *         required: true
+ *         description: data report
+ *         schema:
+ *           type: object
+ *           properties:
+ *             $ref: '#/definitions/dashboard'
+ *           example: {
+ *              success: true
+ *           }
+ *       404:
+ *         description: When data cannot be process
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               $ref: '#/definitions/ValidatorErrorItem'
+ *           example: {
+ *             success: false,
+ *             errors: {
+ *                 "param": "EXISTS",
+ *               }
+ *           }
+ *       500:
+ *         description: When got server exception
+ *         schema:
+ *           type: string
+ *           example: "Internal server error"
+ */
+
+/**
+ * @swagger
  * /user/create:
  *   post:
  *     summary: Tạo Tài khoản, sau khi gửi thông tin đi sẽ nhận được Email OTP (Step 1)

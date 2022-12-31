@@ -39,11 +39,12 @@
 //   }
 // };
 
-import nodemailer from "nodemailer";
-import { google } from "googleapis";
+import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
+import { mail } from '../utils/constant.js';
+
 const { OAuth2 } = google.auth;
-const OAUTH_PLAYGROUND = "https://developers.google.com/oauthplayground";
-import { mail } from "../utils/constant.js";
+const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground';
 
 const {
   MAILING_SERVICE_CLIENT_ID,
@@ -73,9 +74,9 @@ export const nodeMailerSendEmail = async (
 
   const accessToken = oauth2Client.getAccessToken();
   const smtpTransport = nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
-      type: "OAuth2",
+      type: 'OAuth2',
       user: SENDER_EMAIL_ADDRESS,
       clientId: MAILING_SERVICE_CLIENT_ID,
       clientSecret: MAILING_SERVICE_CLIENT_SECRET,

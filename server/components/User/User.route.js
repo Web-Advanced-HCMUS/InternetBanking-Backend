@@ -3,9 +3,15 @@ import { Router } from 'express';
 import * as UserInfoController from './User.controller.js';
 import * as UserInfoValidator from './User.validator.js';
 
-import { isAdmin, authorized } from '../../helper/authorize.mdw.js';
+import { isEmployee, authorized } from '../../helper/authorize.mdw.js';
 
 const router = new Router();
+
+router.route('/refresh-token')
+  .post(
+    UserInfoValidator.getUserIdValidator,
+    UserInfoController.refreshTokenController
+  );
 
 router.route('/create')
   .post(
@@ -34,7 +40,7 @@ router.route('/get-user-info-by-token')
 
 router.route('/get-list-user')
   .get(
-    isAdmin(),
+    isEmployee(),
     UserInfoController.getListUserController
   );
 

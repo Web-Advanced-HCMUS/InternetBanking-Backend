@@ -22,25 +22,24 @@ const autoGenAccountNumber = () => `087${Math.floor(100000 + Math.random() * 900
 
 const generateAccessToken = (userData) => jwt.sign(userData, ACCESS_KEY, { expiresIn: '7d' });
 
-export const refreshTokenService = async (userId) => {
+export const refreshTokenService = async (userId, refreshToken) => {
   try {
-    const userLogin = await UserLoginModel.findById(userId).lean();
-    if (!userLogin) return errorMessage(404, 'User not found!');
-
-    if (!userLogin?.refreshToken) return errorMessage(401, 'Unauthorized');
-
-    const { refreshToken } = userLogin;
+    if (!refreshToken) return errorMessage(401, 'UNAUTHORIZED!');
+    const matchToken = await UserLoginModel.findOne({ userId, refreshToken }).lean();
+    if (!matchToken) return errorMessage(403, 'FORBIDDEN!');
 
     const user = jwt.verify(refreshToken, REFRESH_KEY);
-    const accessToken = generateAccessToken(user);
+    const { _id } = user;
+
+    const accessToken = generateAccessToken({ _id });
 
     return accessToken;
   } catch (error) {
-    return error;
+    return errorMessage(500, error);
   }
 };
 
-export async function generateOTPService(userId, feature) {
+export async function generateOTPService(userId) {
   try {
     let otp = Math.floor(100000 + Math.random() * 900000);
     const hasOTP = await UserOTPModel.findOne({ otp });
@@ -51,7 +50,6 @@ export async function generateOTPService(userId, feature) {
     const useOtpSchema = {
       otp,
       userId,
-      feature,
       expiredTime,
     };
 
@@ -193,10 +191,10 @@ export async function userLoginService(body) {
 
     if (!user?.userId?.isActivated) return errorMessage(405, 'UNACTIVED!');
 
-    const { _id } = user;
-    const token = generateAccessToken(_id);
+    const { _id, refreshToken } = user;
+    const accessToken = generateAccessToken({ _id });
 
-    return token;
+    return { accessToken, refreshToken };
   } catch (error) {
     return errorMessage(500, error);
   }
@@ -217,17 +215,11 @@ export async function getUserInfoService(auth) {
 export async function getListUserService(skip, limit) {
   try {
     const [payload, count] = await Promise.all([
-      UserInfoModel.find(
-        { isActivated: true },
-        {
-          accountNumber: 1,
-          currentBalance: 1,
-        }
-      )
+      AccountModel.find({}).populate('userId')
       .skip(skip)
       .limit(limit)
       .lean(),
-      UserInfoModel.countDocuments({}),
+      AccountModel.countDocuments({}),
     ]);
 
     return [count, payload];
@@ -286,12 +278,12 @@ export async function forgotPasswordService(username, otp, newPass) {
 export async function changePasswordService(auth, oldPass, newPass) {
   try {
     const { _id } = auth;
-    const hasUser = await UserInfoModel.findById(_id).lean();
+    const hasUser = await UserLoginModel.findOne({ userId: _id }).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
-    if (hasUser?.password !== oldPass) { return errorMessage(405, 'WRONG OLD PASSWORD!'); }
+    if (hasUser?.password !== oldPass) return errorMessage(405, 'WRONG OLD PASSWORD!');
 
-    await UserInfoModel.findByIdAndUpdate(_id, { password: newPass });
+    await UserLoginModel.findOneAndUpdate({ userId: _id }, { password: newPass });
 
     return true;
   } catch (error) {
@@ -301,9 +293,9 @@ export async function changePasswordService(auth, oldPass, newPass) {
 
 export async function getUserByAccountNumberService(accountNumber) {
   try {
-    const hasUser = await UserInfoModel.findOne(
+    const hasUser = await AccountModel.findOne(
       { accountNumber },
-      { fullName: 1, accountNumber: 1 }
+      { accountOwnerName: 1, accountNumber: 1 }
     ).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
