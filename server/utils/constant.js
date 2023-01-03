@@ -1,6 +1,7 @@
 export const USER_ROLE = {
-  CLIENT: 'customer',
-  ADMIN: 'admin'
+  CLIENT: 'CLIENT',
+  EMPLOYEE: 'EMPLOYEE',
+  ADMIN: 'ADMIN'
 };
 
 export const USER_MODEL_TYPE = {
@@ -32,9 +33,17 @@ export const TRANSFER_TYPE = {
 export const TRANSACTION_TYPE = {
   DEPOSIT: 'deposit',
   RECEIVE_TRANSFER: 'receive-transfer',
+  RECEIVE_DEBT_PAYMENT: 'receive-debt-payment',
+  INTERBANK_DEPOSIT: 'interbank-deposit',
+  INTERBANK_SPEND: 'interbank-spend',
   SPEND_TRANSFER: 'spend-transfer',
-  PAY_DEBT: 'pay-debt',
-  RECEIVE_DEBT_PAYMENT: 'receive-debt-payment'
+  PAY_DEBT: 'pay-debt'
+};
+
+export const TRANSACTION_STATUS = {
+  FAIL: 'fail',
+  PENDING: 'pending',
+  SUCCESS: 'success'
 };
 
 export const FEE_PAID_TYPE = {
@@ -50,4 +59,15 @@ export const ACCOUNT_TYPE = {
 export const OTP_STATUS = {
   PENDING: 'pending',
   CONFIRM: 'confirmed'
+};
+
+export const BANK = {
+  CODE: 'TIMO'
+};
+
+export const mail = {
+  MAILING_SERVICE_CLIENT_ID: process.env.MAILING_SERVICE_CLIENT_ID,
+  MAILING_SERVICE_CLIENT_SECRET: process.env.MAILING_SERVICE_CLIENT_SECRET,
+  MAILING_SERVICE_REFRESH_TOKEN: process.env.MAILING_SERVICE_REFRESH_TOKEN,
+  SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS,
 };

@@ -5,10 +5,13 @@ import { errorMessage } from '../../utils/error.js';
 
 import UserInfoModel from '../model/UserInfo.model.js';
 import UserOTPModel from '../model/UserOTP.model.js';
+import AccountModel from '../model/Account.model.js';
+import UserLoginModel from '../model/UserLogin.model.js';
+import EmployeeModel from '../model/Employee.model.js';
 
 import { nodeMailerSendEmail } from '../../helper/mailer.js';
 
-import { USER_ROLE, USER_GENDER } from '../../utils/constant.js';
+import { USER_ROLE, USER_GENDER, USER_MODEL_TYPE } from '../../utils/constant.js';
 
 import { recoverPasswordMail } from '../../utils/mailTemplate/recoveryPassword.mailTemplate.js';
 import { createAccountOTPMail } from '../../utils/mailTemplate/createAccount.mailTemplate.js';
@@ -17,7 +20,26 @@ const { ACCESS_KEY, REFRESH_KEY } = process.env;
 
 const autoGenAccountNumber = () => `087${Math.floor(100000 + Math.random() * 900000)}`;
 
-export async function generateOTPService(userId, feature) {
+const generateAccessToken = (userData) => jwt.sign(userData, ACCESS_KEY, { expiresIn: '7d' });
+
+export const refreshTokenService = async (userId, refreshToken) => {
+  try {
+    if (!refreshToken) return errorMessage(401, 'UNAUTHORIZED!');
+    const matchToken = await UserLoginModel.findOne({ userId, refreshToken }).lean();
+    if (!matchToken) return errorMessage(403, 'FORBIDDEN!');
+
+    const user = jwt.verify(refreshToken, REFRESH_KEY);
+    const { _id } = user;
+
+    const accessToken = generateAccessToken({ _id });
+
+    return accessToken;
+  } catch (error) {
+    return errorMessage(500, error);
+  }
+};
+
+export async function generateOTPService(userId) {
   try {
     let otp = Math.floor(100000 + Math.random() * 900000);
     const hasOTP = await UserOTPModel.findOne({ otp });
@@ -28,8 +50,7 @@ export async function generateOTPService(userId, feature) {
     const useOtpSchema = {
       otp,
       userId,
-      feature,
-      expiredTime
+      expiredTime,
     };
 
     await UserOTPModel.create(useOtpSchema);
@@ -43,12 +64,7 @@ export async function generateOTPService(userId, feature) {
 export async function createUserService(body) {
   try {
     const {
-      username,
-      phone,
-      identityCard,
-      email,
-      role,
-      gender
+      username, password, phone, identityCard, email, role, gender, accountType
     } = body;
 
     const isUsername = await UserInfoModel.findOne({ username }).lean();
@@ -67,15 +83,63 @@ export async function createUserService(body) {
     const isAccNumber = await UserInfoModel.findOne({ accountNumber }).lean();
     if (isAccNumber) accountNumber = autoGenAccountNumber();
 
-    const newUser = {
-      ...body,
-      role: USER_ROLE[role],
-      gender: USER_GENDER[gender],
-      accountNumber
+    const newUserInfo = {
+      fullName: body?.fullName,
+      phone,
+      dateOfBirth: body?.dateOfBirth,
+      email,
+      identityCard,
+      address: body?.address,
+      gender: USER_GENDER[gender]
     };
 
-    const createdUser = await UserInfoModel.create(newUser);
-    const userId = createdUser?._id;
+    let userId = null;
+    let refreshToken = null;
+    if (role === USER_ROLE.CLIENT) {
+      const createdUser = await UserInfoModel.create(newUserInfo);
+      userId = createdUser?._id;
+
+      const userData = { userId, username };
+      refreshToken = jwt.sign(userData, REFRESH_KEY);
+
+      const clientLoginSchema = {
+        username,
+        password,
+        refreshToken,
+        userId,
+        userInfoModel: USER_MODEL_TYPE.USER
+      };
+
+      const accountSchema = {
+        userId,
+        accountOwnerName: body?.fullName,
+        accountNumber,
+        accountType
+      };
+
+      await Promise.all([
+        UserLoginModel.create(clientLoginSchema),
+        AccountModel.create(accountSchema)
+      ]);
+    } else {
+      newUserInfo.role = USER_ROLE[role];
+
+      const createdUser = await EmployeeModel.create(newUserInfo);
+
+      const userData = { userId, username };
+      refreshToken = jwt.sign(userData, REFRESH_KEY);
+
+      const clientLoginSchema = {
+        username,
+        password,
+        refreshToken,
+        userId,
+        userInfoModel: USER_MODEL_TYPE.EMPLOYEE
+      };
+      await UserLoginModel.create(clientLoginSchema);
+
+      userId = createdUser?._id;
+    }
 
     // Generate OTP
     const otp = await generateOTPService(userId, 'Verify Account');
@@ -96,15 +160,17 @@ export async function createUserService(body) {
 
 export async function createAccountOTPVerifyService(userId, otp) {
   try {
-    const findOTP = await UserOTPModel.findOne({ _id: userId, otp });
+    const findOTP = await UserOTPModel.findOne({ userId, otp }).populate('userId');
     if (!findOTP) return errorMessage(405, 'WRONG OTP!');
+
+    if (findOTP?.userId?.isActivated) return errorMessage(405, 'ACCOUNT ACTIVATED!');
 
     const currentTime = moment();
     if (currentTime > findOTP?.expiredTime) return errorMessage(405, 'OTP EXPIRED!');
 
     await Promise.all([
-      UserInfoModel.findByIdAndUpdate(userId, { isActived: true }),
-      UserOTPModel.findByIdAndDelete(findOTP?._id)
+      UserInfoModel.findByIdAndUpdate(userId, { isActivated: true }),
+      UserOTPModel.findByIdAndDelete(findOTP?._id),
     ]);
 
     return true;
@@ -115,27 +181,20 @@ export async function createAccountOTPVerifyService(userId, otp) {
 
 export async function userLoginService(body) {
   try {
-    const {
-      username, password
-    } = body;
+    const { username, password } = body;
 
-    const user = await UserInfoModel.findOne({ username });
+    const user = await UserLoginModel.findOne({ username }).populate('userId').lean();
 
     if (!user) return errorMessage(404, 'USER NOT FOUND!');
 
     if (!(user?.password === password)) return errorMessage(405, 'WRONG PASSWORD!');
 
-    if (!user?.isActived) return errorMessage(405, 'UNACTIVED!');
+    if (!user?.userId?.isActivated) return errorMessage(405, 'UNACTIVED!');
 
-    const jwtData = {
-      userId: user?._id,
-      accountNumber: user?.accountNumber,
-      username: user?.username
-    };
+    const { _id, refreshToken } = user;
+    const accessToken = generateAccessToken({ _id });
 
-    const token = jwt.sign(jwtData, ACCESS_KEY, { expiresIn: '7d' });
-
-    return token;
+    return { accessToken, refreshToken };
   } catch (error) {
     return errorMessage(500, error);
   }
@@ -145,7 +204,7 @@ export async function getUserInfoService(auth) {
   try {
     const { _id } = auth;
 
-    const userData = await UserInfoModel.findById(_id).populate('role').lean();
+    const userData = await UserInfoModel.findById(_id);
 
     return userData;
   } catch (error) {
@@ -156,11 +215,11 @@ export async function getUserInfoService(auth) {
 export async function getListUserService(skip, limit) {
   try {
     const [payload, count] = await Promise.all([
-      UserInfoModel.find({ isActived: true }, {
-        accountNumber: 1,
-        currentBalance: 1
-      }).skip(skip).limit(limit).lean(),
-      UserInfoModel.countDocuments({})
+      AccountModel.find({}).populate('userId')
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+      AccountModel.countDocuments({}),
     ]);
 
     return [count, payload];
@@ -171,7 +230,7 @@ export async function getListUserService(skip, limit) {
 
 export async function sendMailForgotPasswordService(username) {
   try {
-    const hasUser = await UserInfoModel.findOne({ username }).lean();
+    const hasUser = await UserLoginModel.findOne({ username }).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
     const { fullName, email, _id } = hasUser;
@@ -180,11 +239,11 @@ export async function sendMailForgotPasswordService(username) {
     const otp = await generateOTPService(_id, 'Forgot Password');
 
     await nodeMailerSendEmail(
-      'Banking Recovery Auto Mail',
       email,
-      null,
+      'Banking Recovery Auto Mail',
       'Password Recovery',
-      recoverPasswordMail(fullName, otp)
+      recoverPasswordMail(fullName, otp),
+      null
     );
 
     return true;
@@ -195,13 +254,15 @@ export async function sendMailForgotPasswordService(username) {
 
 export async function forgotPasswordService(username, otp, newPass) {
   try {
-    const hasOTP = await UserOTPModel.findOne({ otp }).populate('userId').lean();
+    const hasOTP = await UserOTPModel.findOne({ otp })
+      .populate('userId')
+      .lean();
     if (!hasOTP) return errorMessage(405, 'Wrong OTP');
 
-    if (hasOTP?.userId?.username !== username) return errorMessage(405, 'Wrong OTP');
+    if (hasOTP?.userId?.username !== username) { return errorMessage(405, 'Wrong OTP'); }
 
     const currentTime = moment();
-    if (hasOTP?.expiredTime < currentTime) return errorMessage(405, 'OTP Expired!');
+    if (hasOTP?.expiredTime < currentTime) { return errorMessage(405, 'OTP Expired!'); }
 
     const { _id } = hasOTP.userId;
     await UserInfoModel.findByIdAndUpdate(_id, { password: newPass });
@@ -217,12 +278,12 @@ export async function forgotPasswordService(username, otp, newPass) {
 export async function changePasswordService(auth, oldPass, newPass) {
   try {
     const { _id } = auth;
-    const hasUser = await UserInfoModel.findById(_id).lean();
+    const hasUser = await UserLoginModel.findOne({ userId: _id }).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
     if (hasUser?.password !== oldPass) return errorMessage(405, 'WRONG OLD PASSWORD!');
 
-    await UserInfoModel.findByIdAndUpdate(_id, { password: newPass });
+    await UserLoginModel.findOneAndUpdate({ userId: _id }, { password: newPass });
 
     return true;
   } catch (error) {
@@ -232,7 +293,10 @@ export async function changePasswordService(auth, oldPass, newPass) {
 
 export async function getUserByAccountNumberService(accountNumber) {
   try {
-    const hasUser = await UserInfoModel.findOne({ accountNumber }, { fullName: 1, accountNumber: 1 }).lean();
+    const hasUser = await AccountModel.findOne(
+      { accountNumber },
+      { accountOwnerName: 1, accountNumber: 1 }
+    ).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
     return hasUser;
