@@ -5,7 +5,7 @@ export default function (error, req, res, next) {
     logger.error(error.stack);
   }
   const status = error.statusCode || error.status || 500;
-  const payload = error.message || 'Internal server error';
+  const payload = error.message || error.errors || 'Internal server error';
 
   res.status(status).json({
     success: false,
