@@ -8,7 +8,7 @@ import InterbankModel from '../components/model/InterBank.model.js';
 import { genHmac } from './signHmac.js';
 import { USER_MODEL_TYPE } from '../utils/constant.js';
 
-const { ACCESS_KEY } = process.env;
+const { ACCESS_KEY, TIME_EXPIRED } = process.env;
 
 export function authorized() {
   return async (req, res, next) => {
@@ -97,34 +97,34 @@ export function verifyTokenUsingSecretKey() {
   return async (req, res, next) => {
     const { time, hmac, bankCode } = req.query;
 
-    if (!time || !hmac) {
-      next(
+    if (!time || !hmac || !bankCode) {
+      return next(
           new APIError(400, 'bad request')
       );
     }
 
     const differentTime = Math.floor(Date.now() - time);
-    if (differentTime > process.env.TIME_EXPIRED) {
-      next(
-          new APIError(401, 'token expired')
+    if (differentTime > TIME_EXPIRED) {
+      return next(
+          new APIError(401, 'hmac token is expired')
       );
     }
 
     const { secretKey } = await InterbankModel.findOne({ code: bankCode });
     if (!secretKey) {
-      next(
+      return next(
         new APIError(401, 'bank is not exist in system')
       );
     }
 
     const signServer = genHmac(req.query, secretKey);
     if (signServer !== hmac) {
-      next(
-        new APIError(401, 'token invalid')
+      return next(
+        new APIError(401, 'hmac token is invalid')
       );
     }
 
-    next();
+    return next();
   };
 }
 
