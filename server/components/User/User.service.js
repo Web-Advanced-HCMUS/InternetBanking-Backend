@@ -61,11 +61,13 @@ export async function generateOTPService(userId) {
   }
 }
 
-export async function createUserService(body) {
+export async function createUserService(auth, body) {
   try {
     const {
       username, password, phone, identityCard, email, role, gender, accountType
     } = body;
+
+    const { _id } = auth;
 
     const isUsername = await UserInfoModel.findOne({ username }).lean();
     if (isUsername) return errorMessage('Username existed!');
@@ -114,7 +116,8 @@ export async function createUserService(body) {
         userId,
         accountOwnerName: body?.fullName,
         accountNumber,
-        accountType
+        accountType,
+        createBy: _id
       };
 
       await Promise.all([

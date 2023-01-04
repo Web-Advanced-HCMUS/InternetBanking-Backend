@@ -7,7 +7,8 @@ const AccountSchema = new mongoose.Schema({
   currentBalance: { type: Number, default: 0 },
   accountOwnerName: { type: String, require: true },
   accountNumber: { type: String, require: true },
-  accountType: { type: String, enum: Object.values(ACCOUNT_TYPE), require: true }
+  createBy: { type: mongoose.Types.ObjectId, ref: 'Employee', require: true },
+  accountType: { type: String, default: ACCOUNT_TYPE.PAYMENT }
 }, { collection: 'Accounts', versionKey: false });
 
 export default mongoose.model('Account', AccountSchema);

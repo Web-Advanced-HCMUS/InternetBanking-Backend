@@ -15,8 +15,8 @@ export async function refreshTokenController(req, res) {
 
 export async function createUserController(req, res) {
   try {
-    const { body } = req;
-    const payload = await UserInfoService.createUserService(body);
+    const { body, auth } = req;
+    const payload = await UserInfoService.createUserService(auth, body);
 
     return res.RH.success(payload);
   } catch (error) {
