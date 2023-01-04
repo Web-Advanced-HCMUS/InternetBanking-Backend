@@ -9,7 +9,7 @@ import cors from 'cors';
 import ResponseHandler from './utils/respone.js';
 import errorHandle from './utils/errorHandle.js';
 import apis from './endpoint.js';
-import swaggerSpec from './docs.js';
+import { swaggerSpec, swaggerPublic } from './docs.js';
 import logger from './logger.js';
 
 const {
@@ -49,8 +49,15 @@ app.use((req, res, next) => {
 app.use(
   '/api-docs',
   BasicAuth({ users: { [USER_API_DOCS]: PASS_API_DOCS }, challenge: true }),
-  swaggerUI.serve,
+  swaggerUI.serveFiles(swaggerSpec, {}),
   swaggerUI.setup(swaggerSpec)
+);
+
+app.use(
+  '/api-docs-public',
+  BasicAuth({ users: { [USER_API_DOCS]: PASS_API_DOCS }, challenge: true }),
+  swaggerUI.serveFiles(swaggerPublic, {}),
+  swaggerUI.setup(swaggerPublic)
 );
 
 app.use('/', apis);

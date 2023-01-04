@@ -31,6 +31,15 @@ const options = {
   ],
 };
 
-const swaggerSpec = swaggerJSDoc(options);
+const optionsPublic = {
+  swaggerDefinition,
+  apis: [
+    'server/components/InterbankAPI/Interbank.route.js',
+    'server/components/InterbankAPI/Interbank.docs.js',
+    'server/utils/validatorErrorHandler.js',
+  ],
+};
 
-export default swaggerSpec;
+export const swaggerSpec = swaggerJSDoc(options);
+
+export const swaggerPublic = swaggerJSDoc(optionsPublic);
