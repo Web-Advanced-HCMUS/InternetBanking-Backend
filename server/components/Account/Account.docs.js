@@ -1,8 +1,8 @@
 /**
  * @swagger
  * tags:
- *  - name: OTP
- *    description: Everything about OTP
+ *  - name: Account
+ *    description: Everything about Account
  */
 
 /**
@@ -38,24 +38,17 @@
 
 /**
  * @swagger
- *  /api/otp/get-transaction-otp:
- *      post:
+ *  /api/account/get-one/{accountNumber}:
+ *      get:
  *          tags:
- *              - OTP
- *          summary: Lấy otp để thực hiện một giao dịch chuyển khoản
- *          description: OTP được gửi qua email mà user đăng kí với hệ thống, sau khi call API vui lòng kiểm tra email để lấy OTP
+ *              - Account
+ *          summary: Lấy thông tin của một account trong nội bộ ngân hàng
  *          parameters:
- *              - name: body
- *                in: body
+ *              - name: accountNumber
+ *                in: path
  *                required: true
- *                properties:
- *                  userId:
- *                      type: string
- *                  amount:
- *                      type: number
- *                example:
- *                  userId: 63a1e50b1b88dd229b4d2eb5
- *                  amount: 10000
+ *                type: string
+ *                description: The account number which you want to get information
  *          responses:
  *              200:
  *                  description: Successful API
@@ -64,21 +57,20 @@
  *                      example:
  *                          success: true
  *                          payload:
- *                              - message: OTP sent successfully
- *
+ *                              - accountNumber: 9021762999999
+ *                                accountOwnerName: Messi
+ *                                bankCode: TIMO
  *              401:
  *                  description: When data cannot be process
  *                  schema:
  *                      type: array
  *                      items:
  *                          type: object
- *                          properties:
- *                              $ref: '#/definitions/ValidatorErrorItem'
  *                      example:
  *                          success: false
  *                          errors:
  *                              code: 400
- *                              message: Can't find user
+ *                              message: Account is not exist in system
  *              500:
  *                  description: When got server exception
  *                  schema:

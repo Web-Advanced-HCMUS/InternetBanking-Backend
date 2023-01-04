@@ -4,7 +4,9 @@ import { verifyTokenUsingSecretKey } from '../../helper/authorize.mdw.js';
 
 const router = new Router();
 
-router.post('/deposit', verifyTokenUsingSecretKey(), InterbankController.deposit);
+router.post('/rsa-deposit', verifyTokenUsingSecretKey(), InterbankController.deposit);
+router.post('/pgp-deposit', verifyTokenUsingSecretKey());
+router.get('/get-account/:accountNumber', verifyTokenUsingSecretKey(), InterbankController.getAccount);
 
 router.get('/generate-key-pair', InterbankController.getKeyPair);
 router.post('/sign', InterbankController.sign);

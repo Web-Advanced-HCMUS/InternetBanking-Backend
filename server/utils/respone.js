@@ -5,12 +5,12 @@ export default class ResponseHandler {
 
   success(data) {
     if (data) {
-      return this.res.json({
+      return this.res.status(200).json({
         success: true,
         payload: data,
       });
     }
-    return this.res.json({
+    return this.res.status(200).json({
       success: true,
     });
   }

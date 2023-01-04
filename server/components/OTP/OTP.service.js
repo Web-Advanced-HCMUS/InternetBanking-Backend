@@ -12,29 +12,6 @@ const generateOTP = function () {
     return Math.floor(100000 + Math.random() * 900000);
 };
 
-export async function sendTransactionOTP(userId, amount) {
-    try {
-        const user = await UserInfoModel.findOne({ _id: userId });
-
-        if (!user) return errorMessage(200, "Can't find user");
-
-        const [err, otp] = await HandleRequest(getOTP(user._id, 2));
-        if (err) throw new APIError(err.statusCode, err.message);
-
-        // await nodeMailerSendEmail(
-        //     user.email,
-        //     'Internet Banking OTP',
-        //     null,
-        //     transactionOTPMail(otp, amount),
-        //     null
-        // );
-
-        return { message: `OTP sent successfully ${otp}` };
-    } catch (error) {
-        throw new APIError(error.statusCode || error.code || 500, error.message);
-    }
-}
-
 export async function getOTP(userId, minute) {
     try {
         const otpInfo = {
@@ -49,6 +26,29 @@ export async function getOTP(userId, minute) {
         await UserOTPModel.create(otpInfo);
 
         return otpInfo.otp;
+    } catch (error) {
+        throw new APIError(error.statusCode || error.code || 500, error.message);
+    }
+}
+
+export async function sendTransactionOTP(userId, amount) {
+    try {
+        const user = await UserInfoModel.findOne({ _id: userId });
+
+        if (!user) throw new APIError(400, "Can't find user");
+
+        const [err, otp] = await HandleRequest(getOTP(user._id, 2));
+        if (err) throw new APIError(err.statusCode, err.message);
+
+        // await nodeMailerSendEmail(
+        //     user.email,
+        //     'Internet Banking OTP',
+        //     null,
+        //     transactionOTPMail(otp, amount),
+        //     null
+        // );
+
+        return { message: `OTP sent successfully ${otp}` };
     } catch (error) {
         throw new APIError(error.statusCode || error.code || 500, error.message);
     }

@@ -1,7 +1,7 @@
 /**
  * @swagger
  * tags:
- *  - name: Transaction
+ *  - name: Interbank
  *    description: Everything about Transaction and Transfer
  */
 
@@ -129,10 +129,10 @@
 
 /**
  * @swagger
- *  /api/transaction/get-transactions/{accountNumber}:
+ *  /api/interbank/get-account/{accountNumber}:
  *      get:
  *          tags:
- *              - Transaction
+ *              - Interbank
  *          summary: Lấy danh sách các transactions cùa một acccount
  *          parameters:
  *              - name: accountNumber
@@ -176,11 +176,11 @@
 
 /**
  * @swagger
- *   /api/transaction/internal-transfer:
+ *   /api/interbank/rsa-deposit:
  *      post:
  *          tags:
- *              - Transaction
- *          summary: Thực hiện giao dịch chuyển khoản nội bộ
+ *              - Interbank
+ *          summary: Thực hiện giao dịch nộp tiền vào tài khoản từ ngân hàng đã liên kết
  *          description: Trước khi thực hiện API cần phải thực hiện call API OTP để lấy OTP trước, xem phần OTP .../get-transaction-otp
  *          parameters:
  *              - name: body

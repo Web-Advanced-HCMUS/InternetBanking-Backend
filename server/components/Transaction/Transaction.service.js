@@ -6,6 +6,7 @@ import { HandleRequest } from '../../utils/HandleRequest.js';
 import {
  BANK, FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE
 } from '../../utils/constant.js';
+import * as InterbankService from '../InterbankAPI/Interbank.service.js';
 
 export async function getList(accountNumber) {
   try {
@@ -15,19 +16,72 @@ export async function getList(accountNumber) {
   }
 }
 
+async function acceptSenderTransaction(acceptTransaction) {
+  try {
+    const senderTransaction = {
+      ...acceptTransaction,
+      accountNumber: acceptTransaction.fromAccountNumber,
+      targetAccountNumber: acceptTransaction.toAccountNumber,
+      targetAccountOwnerName: acceptTransaction.toAccountOwnerName
+    };
+
+    const [err, result] = await HandleRequest(AccountService.subtractMoneyFromAccount(
+        senderTransaction.accountNumber,
+        senderTransaction.amount + senderTransaction.fee
+    ));
+    if (err) throw new APIError(err.statusCode, err.message);
+
+    return await TransactionModel.create(senderTransaction);
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
+}
+
+async function acceptReceiverTransaction(acceptTransaction) {
+  try {
+    const receiverTransaction = {
+      ...acceptTransaction,
+      accountNumber: acceptTransaction.toAccountNumber,
+      targetAccountOwnerName: acceptTransaction.fromAccountOwnerName,
+      targetAccountNumber: acceptTransaction.fromAccountNumber
+    };
+
+    const [err, result] = await HandleRequest(AccountService.addMoneyToAccount(
+        receiverTransaction.accountNumber,
+        receiverTransaction.amount - receiverTransaction.fee
+    ));
+    if (err) throw new APIError(err.statusCode, err.message);
+
+    return await TransactionModel.create(receiverTransaction);
+  } catch (error) {
+    throw new APIError(error.statusCode || 500, error.message);
+  }
+}
+
 export async function createInterbankTransaction(data, signature) {
   try {
     const acceptTransaction = {
       ...data,
       status: TRANSACTION_STATUS.SUCCESS,
-      bankName: data.bankCode,
+      bankCode: data.bankCode,
       signature
     };
 
-    const [err, receiverTransaction] = await HandleRequest(acceptReceiverTransaction(acceptTransaction));
-    if (err) throw new APIError(err.statusCode, err.message);
+    const [err1, receiverTransaction] = await HandleRequest(acceptReceiverTransaction(acceptTransaction));
+    if (err1) throw new APIError(err1.statusCode, err1.message);
 
-    return { transaction: receiverTransaction };
+    const privateKey = process.env.PRIVATE_KEY.replace(/\\n/g, '\n');
+
+    const [err2, serverSign] = await HandleRequest(InterbankService.getSignature(acceptTransaction, privateKey));
+    if (err2) throw new APIError(err2.statusCode, err2.message);
+
+    delete acceptTransaction.signature;
+
+    return {
+      data: acceptTransaction,
+      signature: serverSign,
+      publicKey: process.env.PUBLIC_KEY.replace(/\\n/g, '\n')
+    };
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);
   }
@@ -54,7 +108,7 @@ export async function createInternalTransaction(data) {
       }));
       if (err2) throw new APIError(err1.statusCode, err1.message);
 
-      return { transaction: senderTransaction };
+      return { data: senderTransaction };
     } catch (error) {
       throw new APIError(error.statusCode || error.code || 500, error.message);
     }
@@ -78,47 +132,5 @@ export async function verifyTransaction(data) {
     return data;
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);
-  }
-}
-
-async function acceptSenderTransaction(acceptTransaction) {
-  try {
-    const senderTransaction = {
-      ...acceptTransaction,
-      accountNumber: acceptTransaction.fromAccountNumber,
-      targetAccountNumber: acceptTransaction.toAccountNumber,
-      targetAccountOwnerName: acceptTransaction.toAccountOwnerName
-    };
-
-    const [err, result] = await HandleRequest(AccountService.subtractMoneyFromAccount(
-      senderTransaction.accountNumber,
-      senderTransaction.amount + senderTransaction.fee
-    ));
-    if (err) throw new APIError(err.statusCode, err.message);
-
-    return await TransactionModel.create(senderTransaction);
-  } catch (error) {
-    throw new APIError(error.statusCode || error.code || 500, error.message);
-  }
-}
-
-async function acceptReceiverTransaction(acceptTransaction) {
-  try {
-    const receiverTransaction = {
-      ...acceptTransaction,
-      accountNumber: acceptTransaction.toAccountNumber,
-      targetAccountOwnerName: acceptTransaction.fromAccountOwnerName,
-      targetAccountNumber: acceptTransaction.fromAccountNumber
-    };
-
-    const [err, result] = await HandleRequest(AccountService.addMoneyToAccount(
-      receiverTransaction.accountNumber,
-      receiverTransaction.amount - receiverTransaction.fee
-    ));
-    if (err) throw new APIError(err.statusCode, err.message);
-
-    return await TransactionModel.create(receiverTransaction);
-  } catch (error) {
-    throw new APIError(error.statusCode || 500, error.message);
   }
 }
