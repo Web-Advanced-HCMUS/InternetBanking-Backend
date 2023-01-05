@@ -203,14 +203,12 @@
  *         description: Số lượng item trong 1 trang
  *       - name: type
  *         in: path
- *         required: true
  *         type: String
  *         enum: [SEND,RECEIVE,DEBT]
  *         description: Loại danh sách muốn lấy
  *         required: true
  *       - name: order
  *         in: path
- *         required: true
  *         type: String
  *         enum: [asc,desc]
  *         description: Thứ tự sắp xếp của ngày

@@ -20,7 +20,9 @@ const { ACCESS_KEY, REFRESH_KEY } = process.env;
 
 export const autoGenAccountNumber = () => `087${Math.floor(100000 + Math.random() * 900000)}`;
 
-const generateAccessToken = (userData) => jwt.sign(userData, ACCESS_KEY, { expiresIn: '7d' });
+export const generateAccessToken = (userData) => jwt.sign(userData, ACCESS_KEY, { expiresIn: '7d' });
+
+export const autoGenEmpId = () => `${Math.floor(100000 + Math.random() * 900000)}`;
 
 export const refreshTokenService = async (userId, refreshToken) => {
   try {
@@ -69,7 +71,7 @@ export async function createUserService(auth, body) {
 
     const { _id } = auth;
 
-    const isUsername = await UserInfoModel.findOne({ username }).lean();
+    const isUsername = await UserLoginModel.findOne({ username }).lean();
     if (isUsername) return errorMessage('Username existed!');
 
     const isEmail = await UserInfoModel.findOne({ email }).lean();
@@ -124,8 +126,25 @@ export async function createUserService(auth, body) {
         UserLoginModel.create(clientLoginSchema),
         AccountModel.create(accountSchema)
       ]);
+
+      // Generate OTP
+      const otp = await generateOTPService(userId, 'Verify Account');
+
+      await nodeMailerSendEmail(
+        'Banking Recovery Auto Mail',
+        email,
+        null,
+        'Create Account Confirmation OTP',
+        createAccountOTPMail(body?.fullName, otp)
+      );
     } else {
       newUserInfo.role = USER_ROLE[role];
+
+      let empId = autoGenEmpId();
+      const isEmpId = await EmployeeModel.findOne({ empId }).lean();
+      if (isEmpId) empId = autoGenEmpId();
+
+      newUserInfo.empId = empId;
 
       const createdUser = await EmployeeModel.create(newUserInfo);
 
@@ -143,17 +162,6 @@ export async function createUserService(auth, body) {
 
       userId = createdUser?._id;
     }
-
-    // Generate OTP
-    const otp = await generateOTPService(userId, 'Verify Account');
-
-    await nodeMailerSendEmail(
-      'Banking Recovery Auto Mail',
-      email,
-      null,
-      'Create Account Confirmation OTP',
-      createAccountOTPMail(body?.fullName, otp)
-    );
 
     return { userId, accountNumber };
   } catch (error) {

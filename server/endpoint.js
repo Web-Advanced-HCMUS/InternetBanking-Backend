@@ -7,12 +7,15 @@ import OTPRouter from './components/OTP/OTP.route.js';
 import AccountRouter from './components/Account/Account.route.js';
 import UserRoute from './components/User/User.route.js';
 import EmployeeRoute from './components/Employee/Employee.route.js';
+import AdminRoute from './components/Admin/Admin.route.js';
 
 const router = new Router();
 
 router.use('/user', [UserRoute]);
 
 router.use('/emp', [EmployeeRoute]);
+
+router.use('/admin', [AdminRoute]);
 
 router.use('/api/beneficiary', BeneficiaryRouter);
 
