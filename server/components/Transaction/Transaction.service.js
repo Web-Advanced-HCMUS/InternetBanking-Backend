@@ -29,10 +29,11 @@ export async function createInterbankTransaction(data, signature) {
         data.amount - data.fee
     ));
 
-
     const acceptTransaction = {
       ...data,
+      bank: data.bankCode,
       feePaymentMethod,
+      transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
       status: TRANSACTION_STATUS.SUCCESS,
       signature
     };

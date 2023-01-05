@@ -116,8 +116,8 @@
  *              type: number
  *              description: Content of transaction
  *          status:
- *              type: number
- *              description: Amount of transaction
+ *              type: string
+ *              description: Status of transaction
  *          time:
  *              type: string
  *              description: The time which transaction is operated

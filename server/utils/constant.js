@@ -17,7 +17,8 @@ export const USER_GENDER = {
 
 export const DEBT_STATUS = {
   INCOMPLETE: 'incomplete',
-  COMPLETE: 'complete'
+  COMPLETE: 'complete',
+  CANCEL: 'cancel'
 };
 
 export const DEBT_TYPE = {
@@ -32,11 +33,8 @@ export const TRANSFER_TYPE = {
 
 export const TRANSACTION_TYPE = {
   DEPOSIT: 'deposit',
-  RECEIVE_TRANSFER: 'receive-transfer',
-  RECEIVE_DEBT_PAYMENT: 'receive-debt-payment',
-  INTERBANK_DEPOSIT: 'interbank-deposit',
-  INTERBANK_SPEND: 'interbank-spend',
-  SPEND_TRANSFER: 'spend-transfer',
+  INTERNAL_TRANSFER: 'internal-transfer',
+  INTERBANK_TRANSFER: 'interbank-transfer',
   PAY_DEBT: 'pay-debt'
 };
 
@@ -61,8 +59,8 @@ export const OTP_STATUS = {
   CONFIRM: 'confirmed'
 };
 
-export const BANK = {
-  CODE: 'TIMO'
+export const BANK_CODE = {
+  MY_BANK: 'TIMO_CLONE'
 };
 
 export const mail = {

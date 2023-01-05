@@ -9,11 +9,16 @@ export async function getAccount(req, res, next) {
     await AccountController.getAccount(req, res, next);
 }
 
-export async function deposit(req, res, next) {
+export async function rsaDeposit(req, res, next) {
     try {
-        const requestBody = await InterbankService.verifyInterbankDeposit(req, next);
+        const [err1, requestBody] = await HandleRequest(InterbankService.verifyInterbankDeposit(req, next));
+        if (err1) throw new APIError(err1.statusCode, err1.message);
 
-        const data = await TransactionService.createInterbankTransaction(requestBody.data, requestBody.signature);
+        const [err2, acceptTransaction] = await HandleRequest(TransactionService.createInterbankTransaction(requestBody.data, requestBody.signature));
+        if (err2) throw new APIError(err2.statusCode, err2.message);
+
+        const [err3, data] = await HandleRequest(InterbankService.acceptInterbankTransaction(acceptTransaction));
+        if (err3) throw new APIError(err3.statusCode, err3.message);
 
         return res.RH.success(data);
     } catch (error) {
