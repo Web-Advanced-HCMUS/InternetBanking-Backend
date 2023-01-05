@@ -18,9 +18,10 @@ router.route('/create')
     UserInfoController.createUserController
   );
 
-router.route('/create-payment-account')
+router.route('/add-payment-account')
   .post(
     isEmployee(),
+    EmployeeValidator.addAccountValidator,
     EmployeeController.addPaymentAccountController
   );
 
@@ -31,7 +32,7 @@ router.route('/customer-recharge')
     EmployeeController.accountRechargeController
   );
 
-router.route('/single-transfer-history/:type')
+router.route('/single-transfer-history/:type/:order')
   .post(
     isEmployee(),
     EmployeeController.transactionHistoryController

@@ -28,8 +28,8 @@ export async function transactionHistoryController(req, res) {
   try {
     const { page, skip, limit } = pagingQuery(req);
     const { body } = req;
-    const { type } = req.params;
-    const payload = await EmployeeService.transactionHistoryService(type, body, skip, limit);
+    const { type, order } = req.params;
+    const payload = await EmployeeService.transactionHistoryService(type, order, body, skip, limit);
 
     return res.RH.paging(payload, page, limit);
   } catch (error) {

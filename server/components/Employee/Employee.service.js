@@ -114,10 +114,10 @@ export async function accountRechargeService(auth, body) {
   }
 }
 
-export async function transactionHistoryService(type, body, skip, limit) {
+export async function transactionHistoryService(type, order, body, skip, limit) {
   try {
     const {
-      fromDate, toDate = new Date(), order, accountNumber
+      fromDate, toDate = new Date(), accountNumber
     } = body;
 
     let count = 0;
