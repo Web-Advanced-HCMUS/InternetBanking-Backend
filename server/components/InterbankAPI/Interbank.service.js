@@ -26,6 +26,39 @@ function getDataConfirmationString(data) {
   return keyValues.join('&').toString();
 }
 
+export async function getSignature(data, privateKey) {
+  try {
+    const hashData = md5(getDataConfirmationString(data));
+
+    const privateKeyObject = crypto.createPrivateKey(privateKey);
+
+    const sign = crypto.createSign('SHA256');
+    sign.update(hashData);
+    sign.end();
+
+    return sign.sign(privateKeyObject).toString('base64');
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
+}
+
+export async function acceptInterbankTransaction(data) {
+  try {
+    const privateKey = process.env.PRIVATE_KEY.replace(/\\n/g, '\n');
+
+    const [err2, serverSign] = await HandleRequest(getSignature(data, privateKey));
+    if (err2) throw new APIError(err2.statusCode, err2.message);
+
+    return {
+      data,
+      signature: serverSign,
+      publicKey: process.env.PUBLIC_KEY.replace(/\\n/g, '\n')
+};
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
+}
+
 export function verifySignature(data, signature, publicKey) {
   try {
     const hashData = md5(getDataConfirmationString(data));
@@ -37,7 +70,7 @@ export function verifySignature(data, signature, publicKey) {
 
     return verify.verify(publicKeyObject, Buffer.from(signature, 'base64'));
   } catch (error) {
-    throw new APIError(401, error.message);
+    throw new APIError(400, error.message);
   }
 }
 
@@ -53,30 +86,11 @@ export async function verifyInterbankDeposit(req) {
     if (!validBank) throw new APIError(400, 'Bank does not be linked in system before');
 
     const validAccount = await AccountModel.findOne({
-      accountNumber: req.body.data.toAccountNumber,
-      accountOwnerName: req.body.data.toAccountOwnerName
+      accountNumber: req.body.data.toAccountNumber
     });
     if (!validAccount) throw new APIError(400, 'Beneficiary does not exist in system');
 
     return req.body;
-  } catch (error) {
-    console.log(error);
-    throw new APIError(error.statusCode || error.code || 500, error.message);
-  }
-}
-
-export async function getSignature(data, privateKey) {
-  try {
-    console.log(getDataConfirmationString(data))
-    const hashData = md5(getDataConfirmationString(data));
-
-    const privateKeyObject = crypto.createPrivateKey(privateKey);
-
-    const sign = crypto.createSign('SHA256');
-    sign.update(hashData);
-    sign.end();
-
-    return sign.sign(privateKeyObject).toString('base64');
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);
   }
