@@ -4,84 +4,50 @@ import * as OTPService from '../OTP/OTP.service.js';
 import APIError from '../../utils/APIError.js';
 import { HandleRequest } from '../../utils/HandleRequest.js';
 import {
- BANK, FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE
+ BANK_CODE, FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE
 } from '../../utils/constant.js';
 import * as InterbankService from '../InterbankAPI/Interbank.service.js';
 
-export async function getList(accountNumber) {
+export async function getList(accountNumber, type) {
   try {
-    return await TransactionModel.find({ accountNumber });
+    if (type === 'receive') return await TransactionModel.find({ toAccountNumber: accountNumber });
+    if (type === 'spend') return await TransactionModel.find({ fromAccountNumber: accountNumber });
+
+    if (type === 'all') await TransactionModel.find({ $or: [{ fromAccountNumber: accountNumber }, { toAccountNumber: accountNumber }] });
+
+    return [];
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);
-  }
-}
-
-async function acceptSenderTransaction(acceptTransaction) {
-  try {
-    const senderTransaction = {
-      ...acceptTransaction,
-      accountNumber: acceptTransaction.fromAccountNumber,
-      targetAccountNumber: acceptTransaction.toAccountNumber,
-      targetAccountOwnerName: acceptTransaction.toAccountOwnerName
-    };
-
-    const [err, result] = await HandleRequest(AccountService.subtractMoneyFromAccount(
-        senderTransaction.accountNumber,
-        senderTransaction.amount + senderTransaction.fee
-    ));
-    if (err) throw new APIError(err.statusCode, err.message);
-
-    return await TransactionModel.create(senderTransaction);
-  } catch (error) {
-    throw new APIError(error.statusCode || error.code || 500, error.message);
-  }
-}
-
-async function acceptReceiverTransaction(acceptTransaction) {
-  try {
-    const receiverTransaction = {
-      ...acceptTransaction,
-      accountNumber: acceptTransaction.toAccountNumber,
-      targetAccountOwnerName: acceptTransaction.fromAccountOwnerName,
-      targetAccountNumber: acceptTransaction.fromAccountNumber
-    };
-
-    const [err, result] = await HandleRequest(AccountService.addMoneyToAccount(
-        receiverTransaction.accountNumber,
-        receiverTransaction.amount - receiverTransaction.fee
-    ));
-    if (err) throw new APIError(err.statusCode, err.message);
-
-    return await TransactionModel.create(receiverTransaction);
-  } catch (error) {
-    throw new APIError(error.statusCode || 500, error.message);
   }
 }
 
 export async function createInterbankTransaction(data, signature) {
   try {
+    const feePaymentMethod = data.fee > 0 ? FEE_PAID_TYPE.PAID_RECEIVER : FEE_PAID_TYPE.PAID_SENDER;
+    const [err1, receiverResult] = await HandleRequest(AccountService.addMoneyToAccount(
+        data.toAccountNumber,
+        data.amount - data.fee
+    ));
+
+
     const acceptTransaction = {
       ...data,
+      feePaymentMethod,
       status: TRANSACTION_STATUS.SUCCESS,
-      bankCode: data.bankCode,
       signature
     };
+    let transaction = acceptTransaction;
+    if (receiverResult?.modifiedCount === 0 || err1) {
+      acceptTransaction.status = TRANSACTION_STATUS.FAIL;
+      acceptTransaction.message = `Error occur while operate transaction - ${err1.message}`;
+    } else {
+      const [err2, rs] = await HandleRequest(TransactionModel.create(acceptTransaction));
+      if (err2) throw new APIError(err2.statusCode, err2.message);
 
-    const [err1, receiverTransaction] = await HandleRequest(acceptReceiverTransaction(acceptTransaction));
-    if (err1) throw new APIError(err1.statusCode, err1.message);
+      transaction = rs;
+    }
 
-    const privateKey = process.env.PRIVATE_KEY.replace(/\\n/g, '\n');
-
-    const [err2, serverSign] = await HandleRequest(InterbankService.getSignature(acceptTransaction, privateKey));
-    if (err2) throw new APIError(err2.statusCode, err2.message);
-
-    delete acceptTransaction.signature;
-
-    return {
-      data: acceptTransaction,
-      signature: serverSign,
-      publicKey: process.env.PUBLIC_KEY.replace(/\\n/g, '\n')
-    };
+    return transaction;
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);
   }
@@ -89,47 +55,63 @@ export async function createInterbankTransaction(data, signature) {
 
 export async function createInternalTransaction(data) {
     try {
+      const senderFee = data.feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? data.fee : 0;
+      const [err, senderResult] = await HandleRequest(AccountService.subtractMoneyFromAccount(
+          data.fromAccountNumber,
+          data.amount + senderFee
+      ));
+      if (err) throw new APIError(err.statusCode, err.message);
+      if (senderResult.modifiedCount === 0) throw new APIError(500, 'Error occur while operating transaction');
+
+      const receiverFee = data.feePaymentMethod === FEE_PAID_TYPE.PAID_RECEIVER ? data.fee : 0;
+      const [err2, receiverResult] = await HandleRequest(AccountService.addMoneyToAccount(
+          data.toAccountNumber,
+          data.amount - receiverFee
+      ));
+      if (err2) throw new APIError(err2.statusCode, err2.message);
+      if (receiverResult.modifiedCount === 0) throw new APIError(500, 'Error occur while operating transaction');
+
       const acceptTransaction = {
         ...data,
         status: TRANSACTION_STATUS.SUCCESS,
-        bankName: BANK.CODE
       };
+      const [err3, transaction] = await HandleRequest(TransactionModel.create(acceptTransaction));
+      if (err3) throw new APIError(err3.statusCode, err3.message);
 
-      const [err1, senderTransaction] = await HandleRequest(acceptSenderTransaction({
-        ...acceptTransaction,
-        fee: data.feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? acceptTransaction.fee : 0
-      }));
-      if (err1) throw new APIError(err1.statusCode, err1.message);
-
-      const [err2, receiverTransaction] = await HandleRequest(acceptReceiverTransaction({
-        ...acceptTransaction,
-        transactionType: TRANSACTION_TYPE.RECEIVE_TRANSFER,
-        fee: data.feePaymentMethod === FEE_PAID_TYPE.PAID_RECEIVER ? acceptTransaction.fee : 0
-      }));
-      if (err2) throw new APIError(err1.statusCode, err1.message);
-
-      return { data: senderTransaction };
+      return { data: transaction };
     } catch (error) {
       throw new APIError(error.statusCode || error.code || 500, error.message);
     }
 }
 
-export async function verifyTransaction(data) {
+export async function verifyInternalTransaction(data) {
   try {
-    const { userId, otp, fromAccountNumber, toAccountNumber, amount, fee } = data;
+    const { userId, otp, fromAccountNumber, toAccountNumber, amount, fee, feePaymentMethod } = data;
 
-    const [err1, isSuccess] = await HandleRequest(OTPService.verifyOTP(userId, otp));
+    const [err1, modifiedCount] = await HandleRequest(OTPService.verifyOTP(userId, otp));
     if (err1) throw new APIError(err1.statusCode, err1.message);
+    if (modifiedCount === 0) throw new APIError(400, 'Error occur while verify OTP');
 
-    const [err2, account] = await HandleRequest(AccountService.getAccount(toAccountNumber));
+    const [err2, fromAccount] = await HandleRequest(AccountService.getAccount(fromAccountNumber));
     if (err2) throw new APIError(err2.statusCode, err2.message);
-    if (account === null) throw new APIError(200, 'Target account number does not exist in system');
+    if (!fromAccount) throw new APIError(400, 'Account operates transaction is not exist in system');
 
-    const [err3, isValidBalance] = await HandleRequest(AccountService.checkBalanceAfterSpend(fromAccountNumber, amount, fee));
+    const [err3, toAccount] = await HandleRequest(AccountService.getAccount(toAccountNumber));
     if (err3) throw new APIError(err3.statusCode, err3.message);
-    if (isValidBalance !== true) throw new APIError(200, 'Your account does not have enough balance to make a transaction');
+    if (!toAccount) throw new APIError(400, 'Beneficiary account is not exist in system');
 
-    return data;
+    const senderFee = feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? fee : 0;
+    const [err4, isValidBalance] = await HandleRequest(AccountService.checkBalanceAfterSpend(fromAccountNumber, amount, senderFee));
+    if (err4) throw new APIError(err4.statusCode, err4.message);
+    if (!isValidBalance) throw new APIError(400, 'Your account does not have enough balance to make a transaction');
+
+    return {
+      ...data,
+      fromAccountOwnerName: fromAccount.accountOwnerName,
+      toAccountOwnerName: toAccount.accountOwnerName,
+      transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
+      bank: BANK_CODE.MY_BANK
+    };
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);
   }

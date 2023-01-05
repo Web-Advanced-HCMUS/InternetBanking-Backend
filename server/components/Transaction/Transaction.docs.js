@@ -12,25 +12,34 @@
  *      type: object
  *      required:
  *          - _id
- *          - accountNumber
- *          - time
- *          - amount
- *          - fee
- *          - status
- *          - transactionType
  *      properties:
  *          _id:
  *              type: string
  *              description: The id of record
- *          accountNumber:
+ *          fromAccountNumber:
  *              type: string
- *              description: The account number of user
- *          time:
+ *              description: The account number of sender
+ *          fromAccountOwnerName:
  *              type: string
- *              description: The time which transaction is operated
+ *              description: The name of account belong to sender
+ *          toAccountNumber:
+ *              type: string
+ *              description: The account number of receiver
+ *          toAccountOwnerName:
+ *              type: string
+ *              description: The name of account belong to receiver
+ *          bank:
+ *              type: number
+ *              description: Bank code of bank which operate transaction
+ *              example: TIMO
  *          transactionType:
  *              type: string
  *              description: Type of transaction
+ *              enum: ["deposit", "internal-transfer", "interbank-transfer", "pay-debt"]
+ *          feePaymentMethod:
+ *              type: string
+ *              description: Type of fee payment
+ *              enum: ["paid sender", "paid receiver"]
  *          amount:
  *              type: number
  *              description: Amount of transaction
@@ -43,51 +52,119 @@
  *          status:
  *              type: number
  *              description: Amount of transaction
- *          targetAccountOwnerName:
+ *          time:
  *              type: string
- *              description: Account's owner name which is sender or receiver
- *          targetAccountNumber:
- *              type: number
- *              description: Account number of which is sender or receiver
- *          bankCode:
- *              type: number
- *              description: Bank code of bank which operate transaction
+ *              description: The time which transaction is operated
  *          signature:
  *              type: number
  *              description: Signature to verify identity of bank (use in interbank transaction)
  *      example:
- *          _id: 63a21149e08cd286c89ff451
- *          accountNumber: 9021762797979
- *          time: 2022-12-28T16:19:44.085+00:00
- *          transactionType: interbank-deposit
+ *          _id: 63b67aeaffc97269d1428222
+ *          fromAccountNumber: 9021762999999
+ *          fromAccountOwnerName: Messi
+ *          toAccountNumber: 9021762797979
+ *          toAccountOwnerName: Ronaldo
+ *          bank: FB88NCCA
+ *          transactionType: interbank-transfer
+ *          feePaymentMethod: paid sender
  *          amount: 999999
  *          fee: 999
  *          content: chuyển tiền
  *          status: success
- *          targetAccountOwnerName: Ronaldo
- *          targetAccountNumber: 9021762999999
- *          bankCode: FB88NCCA
+ *          time: 2022-12-28T16:19:44.085+00:00
  *          signature: jBFLfUOrO6cwwpb6+fbO3SJL2NtnwE/caVYG9VE02zSNrmIKIGL2f0FCGYxuu/+iU9F6Wu771d2WCFp/FDdOPLR1efNb+GNSpA6+17faMdeWErPrwTBfjA+L1dDkrH63HxhYeZmydDI7XRJ6XTtDrBmcmR6iURfD2JQqUbFAk5p1E9rLKzH7QeP9PGfKpfHGfKFrWUiygOSmCc263FsqHjvwn5SWVH0lePvYnHICEUuH9qwVMyZITBua0Zld4iu1wf92ouPQA6MCen6DrtFrL2D3UDGc3h50Fg1kFCgyqfGEqE54iOfMIqYVj/1p2CpckbNeHgTVqgtcNvA+FuYBZw==
+ *
+ *  InternalTransaction:
+ *      type: object
+ *      required:
+ *          - _id
+ *      properties:
+ *          _id:
+ *              type: string
+ *              description: The id of record
+ *          fromAccountNumber:
+ *              type: string
+ *              description: The account number of sender
+ *          fromAccountOwnerName:
+ *              type: string
+ *              description: The name of account belong to sender
+ *          toAccountNumber:
+ *              type: string
+ *              description: The account number of receiver
+ *          toAccountOwnerName:
+ *              type: string
+ *              description: The name of account belong to receiver
+ *          bank:
+ *              type: number
+ *              description: Bank code of bank which operate transaction
+ *              example: TIMO
+ *          transactionType:
+ *              type: string
+ *              description: Type of transaction
+ *              enum: ["deposit", "internal-transfer", "interbank-transfer", "pay-debt"]
+ *          feePaymentMethod:
+ *              type: string
+ *              description: Type of fee payment
+ *              enum: ["paid sender", "paid receiver"]
+ *          amount:
+ *              type: number
+ *              description: Amount of transaction
+ *          fee:
+ *              type: number
+ *              description: Fee of transaction
+ *          content:
+ *              type: number
+ *              description: Content of transaction
+ *          status:
+ *              type: number
+ *              description: Amount of transaction
+ *          time:
+ *              type: string
+ *              description: The time which transaction is operated
+ *      example:
+ *          _id: 63b67aeaffc97269d1428222
+ *          fromAccountNumber: 9021762999999
+ *          fromAccountOwnerName: Messi
+ *          toAccountNumber: 9021762797979
+ *          toAccountOwnerName: Ronaldo
+ *          bank: TIMO
+ *          transactionType: internal-transfer
+ *          feePaymentMethod: paid sender
+ *          amount: 999999
+ *          fee: 999
+ *          content: chuyển tiền
+ *          status: success
+ *          time: 2022-12-28T16:19:44.085+00:00
  *
  *  CreateInternalTransaction:
  *      type: object
  *      required:
- *          - accountNumber
- *          - time
+ *          - userId
+ *          - otp
+ *          - feePaymentMethod
+ *          - fromAccountNumber
+ *          - toAccountNumber
+ *          - transactionType
  *          - amount
  *          - fee
- *          - status
- *          - transactionType
+ *          - content
  *      properties:
- *          accountNumber:
+ *          userId:
  *              type: string
- *              description: The account number of user
- *          time:
+ *              description: User which operate transaction, use in generate OTP
+ *          otp:
  *              type: string
- *              description: The time which transaction is operated
- *          transactionType:
+ *              description: OTP use in verify user operate transaction
+ *          feePaymentMethod:
  *              type: string
- *              description: Type of transaction
+ *              description: Type of fee payment
+ *              enum: ["paid sender", "paid receiver"]
+ *          fromAccountNumber:
+ *              type: string
+ *              description: The account number of sender
+ *          toAccountNumber:
+ *              type: string
+ *              description: The account number of receiver
  *          amount:
  *              type: number
  *              description: Amount of transaction
@@ -95,36 +172,34 @@
  *              type: number
  *              description: Fee of transaction
  *          content:
- *              type: number
- *              description: Content of transaction
- *          status:
- *              type: number
- *              description: Amount of transaction
- *          targetAccountOwnerName:
  *              type: string
- *              description: Account's owner name which is sender or receiver
- *          targetAccountNumber:
- *              type: number
- *              description: Account number of which is sender or receiver
- *          bankCode:
- *              type: number
- *              description: Bank code of bank which operate transaction
- *          signature:
- *              type: number
- *              description: Signature to verify identity of bank (use in interbank transaction)
+ *              description: Content of transaction
  *      example:
- *          accountNumber: 9021762797979
- *          time: 2022-12-28T16:19:44.085+00:00
- *          transactionType: interbank-deposit
- *          amount: 999999
- *          fee: 999
+ *          userId: 63a1e50b1b88dd229b4d2eb5
+ *          otp: "851843"
+ *          feePaymentMethod: paid sender
+ *          fromAccountNumber: "9021762999999"
+ *          toAccountNumber: "9021762797979"
+ *          amount: 100000
+ *          fee: 5000
  *          content: chuyển tiền
- *          status: success
- *          targetAccountOwnerName: Ronaldo
- *          targetAccountNumber: 9021762999999
- *          bankCode: FB88NCCA
- *          signature: jBFLfUOrO6cwwpb6+fbO3SJL2NtnwE/caVYG9VE02zSNrmIKIGL2f0FCGYxuu/+iU9F6Wu771d2WCFp/FDdOPLR1efNb+GNSpA6+17faMdeWErPrwTBfjA+L1dDkrH63HxhYeZmydDI7XRJ6XTtDrBmcmR6iURfD2JQqUbFAk5p1E9rLKzH7QeP9PGfKpfHGfKFrWUiygOSmCc263FsqHjvwn5SWVH0lePvYnHICEUuH9qwVMyZITBua0Zld4iu1wf92ouPQA6MCen6DrtFrL2D3UDGc3h50Fg1kFCgyqfGEqE54iOfMIqYVj/1p2CpckbNeHgTVqgtcNvA+FuYBZw==
  *
+ *  ErrorItem:
+ *      type: object
+ *      properties:
+ *          success:
+ *              type: boolean
+ *              description: status of api call
+ *          error:
+ *              type: object
+ *              description: Error
+ *              properties:
+ *                  code:
+ *                      type: number
+ *                      description: Error code
+ *                  message:
+ *                      type: string
+ *                      description: describe error
  */
 
 /**
@@ -142,6 +217,14 @@
  *                description: The account number of user which you want to get list
  *                example:
  *                  accountNumber: 9021762797979
+ *              - name: type
+ *                in: query
+ *                require: true
+ *                schema:
+ *                  type: string
+ *                description: The of transaction you want to get | enum ["receive", "spend", "all"]
+ *                example:
+ *                  type: receive
  *          responses:
  *              200:
  *                  description: Successful API
@@ -153,20 +236,20 @@
  *              401:
  *                  description: When data cannot be process
  *                  schema:
- *                      type: array
- *                      items:
- *                          type: object
- *                          properties:
- *                              $ref: '#/definitions/ValidatorErrorItem'
+ *                      type: object
+ *                      properties:
+ *                          $ref: '#/definitions/ErrorItem'
  *                      example:
  *                          success: false
- *                          error:
+ *                          errors:
  *                              code: 400
- *                              message: Account number doesn't exist
+ *                              message: Error here
  *              500:
  *                  description: When got server exception
  *                  schema:
- *                      type: string
+ *                      type: object
+ *                      properties:
+ *                          $ref: '#/definitions/ErrorItem'
  *                      example:
  *                          success: false
  *                          errors:
@@ -186,85 +269,37 @@
  *              - name: body
  *                in: body
  *                required: true
- *                properties:
- *                  userId:
- *                      type: string
- *                  otp:
- *                      type: string
- *                  feePaymentMethod:
- *                      type: string
- *                  fromAccountNumber:
- *                      type: string
- *                  fromAccountOwnerName:
- *                      type: string
- *                  bankCode:
- *                      type: string
- *                  transactionType:
- *                      type: string
- *                  toAccountNumber:
- *                      type: number
- *                  toAccountOwnerName:
- *                      type: string
- *                  amount:
- *                      type: number
- *                  fee:
- *                      type: number
- *                  content:
- *                      type: number
- *                  time:
- *                      type: string
- *                example:
- *                  userId: 63a1e50b1b88dd229b4d2eb5
- *                  otp: 851843
- *                  feePaymentMethod: paid sender
- *                  fromAccountNumber: 9021762999999
- *                  fromAccountOwnerName: Ronaldo
- *                  bankCode: TIMO
- *                  transactionType: spend-transfer
- *                  toAccountNumber: 9021762797979
- *                  toAccountOwnerName: Ronaldo
- *                  amount: 100000
- *                  fee: 5000
- *                  content: chuyển tiền
- *                  time: 1672244384085
+ *                schema:
+ *                  $ref: '#/definitions/CreateInternalTransaction'
  *          responses:
  *              '201':
- *                  description: Successfully insert a users
+ *                  description: Successfully create a transaction
  *                  schema:
  *                      type: object
- *                      items:
- *                          $ref: '#/definitions/Transaction'
- *                      example:
- *                          success: true
+ *                      properties:
+ *                          success:
+ *                              type: boolean
+ *                              example: true
  *                          payload:
- *                              _id: 63b45d4e40599bf643e5e332
- *                              accountNumber: 9021762797979
- *                              time: 2022-12-28T16:19:44.085+00:00
- *                              transactionType: spend-transfer
- *                              amount: 999999
- *                              fee: 999
- *                              content: chuyển tiền
- *                              status: success
- *                              targetAccountOwnerName: Ronaldo
- *                              targetAccountNumber: 9021762999999
- *                              bankCode: TIMO
+ *                              $ref: '#/definitions/InternalTransaction'
+ *
  *              401:
  *                  description: When data cannot be process
  *                  schema:
- *                      type: array
- *                      items:
- *                          type: object
- *                          properties:
- *                              $ref: '#/definitions/ValidatorErrorItem'
+ *                      type: object
+ *                      properties:
+ *                          $ref: '#/definitions/ErrorItem'
  *                      example:
  *                          success: false
  *                          errors:
  *                              code: 400
- *                              message: Error occur
+ *                              message: Error here
  *              500:
  *                  description: When got server exception
  *                  schema:
- *                      type: string
+ *                      type: object
+ *                      properties:
+ *                          $ref: '#/definitions/ErrorItem'
  *                      example:
  *                          success: false
  *                          errors:
