@@ -1,11 +1,67 @@
 import { errorMessage } from '../../utils/error';
 
-import EmployeeModel from '../model/Employee.model';
-import TransactionModel from '../model/Transaction.model';
-import UserLoginModel from '../model/UserLogin.model';
-import AccountModel from '../model/Account.model';
+import EmployeeModel from '../model/Employee.model.js';
+import TransactionModel from '../model/Transaction.model.js';
+import UserLoginModel from '../model/UserLogin.model.js';
+import UserInfoModel from '../model/UserInfo.model';
+import AccountModel from '../model/Account.model.js';
+import DebtModel from '../model/Debt.model.js';
 
-import { TRANSACTION_TYPE, FEE_PAID_TYPE, TRANSACTION_STATUS } from '../../utils/constant';
+import {
+  TRANSACTION_TYPE, FEE_PAID_TYPE, TRANSACTION_STATUS, LIST_TRANSACTION_TYPE, ACCOUNT_TYPE
+} from '../../utils/constant';
+
+import { autoGenAccountNumber } from '../User/User.service';
+
+const SORT_ORDER = {
+  asc: 1,
+  desc: -1
+};
+
+const KEY_ACCOUNT = {
+  SEND: 'fromAccountNumber',
+  RECEIVE: 'fromAccountNumber',
+  DEBT: 'debtorAccountNumber'
+};
+
+const KEY_TIME = {
+  SEND: 'time',
+  RECEIVE: 'time',
+  DEBT: 'startDate'
+};
+
+export async function addPaymentAccountService(auth, body) {
+  try {
+    const { _id } = auth;
+    const { identityCard, accountType } = body;
+
+    const findUser = await UserInfoModel.findOne({ identityCard });
+    if (!findUser) return errorMessage(404, 'NOT FOUND!');
+
+    const userId = findUser?._id;
+
+    let accountNumber = '';
+    let findAcc = '';
+    do {
+      accountNumber = autoGenAccountNumber();
+      findAcc = await AccountModel.findOne({ accountNumber });
+    } while (findAcc?.accountNumber === accountNumber);
+
+    const accountSchema = {
+      userId,
+      accountOwnerName: findUser?.fullName,
+      accountNumber,
+      accountType: ACCOUNT_TYPE[accountType],
+      createBy: _id
+    };
+
+    const createAcc = await AccountModel.create(accountSchema);
+
+    return createAcc?.accountNumber;
+  } catch (error) {
+    return errorMessage(500, error);
+  }
+}
 
 export async function accountRechargeService(auth, body) {
   try {
@@ -58,9 +114,43 @@ export async function accountRechargeService(auth, body) {
   }
 }
 
-export async function transactionHistoryService(body, skip, limit) {
+export async function transactionHistoryService(type, body, skip, limit) {
   try {
-    return true;
+    const {
+      fromDate, toDate = new Date(), order, accountNumber
+    } = body;
+
+    let count = 0;
+    let payload = [];
+
+    const matchCond = { $and: [{ [KEY_TIME[type]]: { $lte: toDate } }, { [KEY_ACCOUNT[type]]: accountNumber }] };
+    if (fromDate) matchCond.$and.push({ [KEY_TIME[type]]: { $gte: fromDate } });
+
+    switch (type) {
+      case LIST_TRANSACTION_TYPE.SEND:
+      case LIST_TRANSACTION_TYPE.RECEIVE: {
+        [count, payload] = await Promise.all([
+          TransactionModel.countDocuments(matchCond),
+          TransactionModel.find(matchCond).sort(SORT_ORDER[order])
+            .skip(skip).limit(limit)
+            .lean()
+        ]);
+        break;
+      }
+      case LIST_TRANSACTION_TYPE.DEBT: {
+        [count, payload] = await Promise.all([
+          DebtModel.countDocuments(matchCond),
+          DebtModel.find(matchCond).sort(SORT_ORDER[order])
+            .skip(skip).limit(limit)
+            .lean()
+        ]);
+        break;
+      }
+      default:
+        return errorMessage(404, 'INVALID TYPE');
+    }
+
+    return [count, payload];
   } catch (error) {
     return errorMessage(500, error);
   }

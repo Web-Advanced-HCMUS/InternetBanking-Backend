@@ -18,7 +18,7 @@ import { createAccountOTPMail } from '../../utils/mailTemplate/createAccount.mai
 
 const { ACCESS_KEY, REFRESH_KEY } = process.env;
 
-const autoGenAccountNumber = () => `087${Math.floor(100000 + Math.random() * 900000)}`;
+export const autoGenAccountNumber = () => `087${Math.floor(100000 + Math.random() * 900000)}`;
 
 const generateAccessToken = (userData) => jwt.sign(userData, ACCESS_KEY, { expiresIn: '7d' });
 

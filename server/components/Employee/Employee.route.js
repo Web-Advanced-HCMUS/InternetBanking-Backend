@@ -18,14 +18,22 @@ router.route('/create')
     UserInfoController.createUserController
   );
 
+router.route('/create-payment-account')
+  .post(
+    isEmployee(),
+    EmployeeController.addPaymentAccountController
+  );
+
 router.route('/customer-recharge')
   .post(
+    isEmployee(),
     EmployeeValidator.getRechargeInfoValidator,
     EmployeeController.accountRechargeController
   );
 
 router.route('/single-transfer-history/:type')
   .post(
+    isEmployee(),
     EmployeeController.transactionHistoryController
   );
 
