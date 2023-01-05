@@ -35,7 +35,8 @@ export const TRANSACTION_TYPE = {
   DEPOSIT: 'deposit',
   INTERNAL_TRANSFER: 'internal-transfer',
   INTERBANK_TRANSFER: 'interbank-transfer',
-  PAY_DEBT: 'pay-debt'
+  PAY_DEBT: 'pay-debt',
+  RECHARGE: 'RECHARGE'
 };
 
 export const TRANSACTION_STATUS = {
@@ -46,7 +47,8 @@ export const TRANSACTION_STATUS = {
 
 export const FEE_PAID_TYPE = {
   PAID_SENDER: 'paid sender',
-  PAID_RECEIVER: 'paid receiver'
+  PAID_RECEIVER: 'paid receiver',
+  NO: 'no'
 };
 
 export const ACCOUNT_TYPE = {

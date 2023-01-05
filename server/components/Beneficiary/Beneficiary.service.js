@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { errorMessage } from '../../utils/error.js';
 
 import BeneficiaryModel from '../model/Beneficiary.model.js';
-import APIError from "../../utils/APIError.js";
+import APIError from '../../utils/APIError.js';
 
 export async function getList(customerId) {
   try {
