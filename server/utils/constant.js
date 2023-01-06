@@ -35,7 +35,8 @@ export const TRANSACTION_TYPE = {
   DEPOSIT: 'deposit',
   INTERNAL_TRANSFER: 'internal-transfer',
   INTERBANK_TRANSFER: 'interbank-transfer',
-  PAY_DEBT: 'pay-debt'
+  PAY_DEBT: 'pay-debt',
+  RECHARGE: 'RECHARGE'
 };
 
 export const TRANSACTION_STATUS = {
@@ -46,7 +47,8 @@ export const TRANSACTION_STATUS = {
 
 export const FEE_PAID_TYPE = {
   PAID_SENDER: 'paid sender',
-  PAID_RECEIVER: 'paid receiver'
+  PAID_RECEIVER: 'paid receiver',
+  NO: 'no'
 };
 
 export const ACCOUNT_TYPE = {
@@ -68,4 +70,10 @@ export const mail = {
   MAILING_SERVICE_CLIENT_SECRET: process.env.MAILING_SERVICE_CLIENT_SECRET,
   MAILING_SERVICE_REFRESH_TOKEN: process.env.MAILING_SERVICE_REFRESH_TOKEN,
   SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS,
+};
+
+export const LIST_TRANSACTION_TYPE = {
+  SEND: 'SEND',
+  RECEIVE: 'RECEIVE',
+  DEBT: 'DEBT'
 };

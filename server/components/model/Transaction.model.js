@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE} from '../../utils/constant.js';
+import { FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE } from '../../utils/constant.js';
 
 const TransactionSchema = new mongoose.Schema({
   fromAccountNumber: { type: String, require: true },

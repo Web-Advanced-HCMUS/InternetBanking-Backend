@@ -28,7 +28,7 @@ module.exports = {
     'valid-jsdoc': 'warn',
     'object-shorthand': 'warn',
     'import/prefer-default-export': 'off',
-    'no-underscore-dangle': 'warn',
+    'no-underscore-dangle': 'off',
     indent: [
       0
     ],

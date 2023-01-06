@@ -6,7 +6,7 @@ export async function getListBeneficiary(req, res, next) {
 
         return res.RH.success(data);
     } catch (error) {
-        next(error);
+        return next(error);
     }
 }
 
@@ -16,7 +16,7 @@ export async function insertOneBeneficiary(req, res, next) {
 
         return res.RH.success(data);
     } catch (error) {
-        next(error);
+        return next(error);
     }
 }
 
@@ -26,7 +26,7 @@ export async function updateOneBeneficiary(req, res, next) {
 
         return res.RH.success({ modifiedCount });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 }
 
@@ -36,6 +36,6 @@ export async function deleteOneBeneficiary(req, res, next) {
 
         return res.RH.success({ deletedCount });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 }
