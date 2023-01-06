@@ -1,7 +1,7 @@
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
 
-import { errorMessage } from '../../utils/error';
+import { errorMessage } from '../../utils/error.js';
 
 import EmployeeModel from '../model/Employee.model.js';
 import UserLoginModel from '../model/UserLogin.model.js';
