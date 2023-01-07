@@ -154,13 +154,9 @@ export async function createUserService(auth, body) {
 
       const createdUser = await EmployeeModel.create(newUserInfo);
 
-      const userData = { userId, username };
-      refreshToken = jwt.sign(userData, REFRESH_KEY);
-
       const clientLoginSchema = {
         username,
         password,
-        refreshToken,
         userId,
         userInfoModel: USER_MODEL_TYPE.EMPLOYEE
       };
@@ -208,10 +204,29 @@ export async function userLoginService(body) {
 
     if (!user?.userId?.isActivated) return errorMessage(405, 'UNACTIVED!');
 
-    const { _id, refreshToken } = user;
+    const { _id } = user;
+    const userData = { _id, username };
+    const refreshToken = jwt.sign(userData, REFRESH_KEY);
+    user.refreshToken = refreshToken;
+    await user.save();
+
     const accessToken = generateAccessToken({ _id });
 
     return { accessToken, refreshToken };
+  } catch (error) {
+    return errorMessage(500, error);
+  }
+}
+
+export async function userLogoutService(auth) {
+  try {
+    const { _id } = auth;
+    const loginData = await UserLoginModel.findOne({ userId: _id });
+    if (!loginData) return errorMessage(404, 'NOT FOUND!');
+    loginData.refreshToken = null;
+    await loginData.save();
+
+    return true;
   } catch (error) {
     return errorMessage(500, error);
   }
@@ -232,11 +247,11 @@ export async function getUserInfoService(auth) {
 export async function getListUserService(skip, limit) {
   try {
     const [payload, count] = await Promise.all([
-      AccountModel.find({}).populate('userId')
+      AccountModel.find({ userInfoModel: USER_MODEL_TYPE.USER }).populate('userId')
       .skip(skip)
       .limit(limit)
       .lean(),
-      AccountModel.countDocuments({}),
+      AccountModel.countDocuments({ userInfoModel: USER_MODEL_TYPE.USER }),
     ]);
 
     return [count, payload];

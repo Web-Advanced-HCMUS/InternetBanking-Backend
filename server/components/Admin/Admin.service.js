@@ -6,6 +6,8 @@ import { errorMessage } from '../../utils/error.js';
 import EmployeeModel from '../model/Employee.model.js';
 import UserLoginModel from '../model/UserLogin.model.js';
 
+import { USER_MODEL_TYPE } from '../../utils/constant.js';
+
 export async function updateEmployeeService(empId, body) {
   try {
     const findEmp = await EmployeeModel.findOne({ empId }).lean();
@@ -41,8 +43,8 @@ export async function deleteEmployeeService(empId) {
 export async function getListEmployeeService(skip, limit) {
   try {
     const [payload, count] = await Promise.all([
-      UserLoginModel.countDocuments({}),
-      UserLoginModel.find({}).populate('userId')
+      UserLoginModel.countDocuments({ userInfoModel: USER_MODEL_TYPE.EMPLOYEE }),
+      UserLoginModel.find({ userInfoModel: USER_MODEL_TYPE.EMPLOYEE }).populate('userId')
       .skip(skip).limit(limit)
       .lean()
     ]);
