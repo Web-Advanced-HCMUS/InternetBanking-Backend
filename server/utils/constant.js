@@ -77,3 +77,5 @@ export const LIST_TRANSACTION_TYPE = {
   RECEIVE: 'RECEIVE',
   DEBT: 'DEBT'
 };
+
+export const HASH_DIGIT = 10;

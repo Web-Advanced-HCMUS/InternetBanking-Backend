@@ -13,13 +13,6 @@ router.route('/refresh-token')
     UserInfoController.refreshTokenController
   );
 
-// router.route('/create')
-//   .post(
-//     UserInfoValidator.getUserPassValidator,
-//     UserInfoValidator.getUserInfoValidator,
-//     UserInfoController.createUserController
-//   );
-
 router.route('/verify-account')
   .get(
     UserInfoValidator.getUserIdValidator,
@@ -30,6 +23,12 @@ router.route('/login')
   .post(
     UserInfoValidator.getUserPassValidator,
     UserInfoController.userLoginController
+  );
+
+router.route('/logout')
+  .get(
+    authorized(),
+    UserInfoController.userLogoutController
   );
 
 router.route('/get-user-info-by-token')

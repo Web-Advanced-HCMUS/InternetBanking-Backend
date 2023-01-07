@@ -1,5 +1,6 @@
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 import { errorMessage } from '../../utils/error.js';
 
@@ -11,7 +12,9 @@ import EmployeeModel from '../model/Employee.model.js';
 
 import { nodeMailerSendEmail } from '../../helper/mailer.js';
 
-import { USER_ROLE, USER_GENDER, USER_MODEL_TYPE } from '../../utils/constant.js';
+import {
+  USER_ROLE, USER_GENDER, USER_MODEL_TYPE, HASH_DIGIT
+} from '../../utils/constant.js';
 
 import { recoverPasswordMail } from '../../utils/mailTemplate/recoveryPassword.mailTemplate.js';
 import { createAccountOTPMail } from '../../utils/mailTemplate/createAccount.mailTemplate.js';
@@ -66,8 +69,11 @@ export async function generateOTPService(userId) {
 export async function createUserService(auth, body) {
   try {
     const {
-      username, password, phone, identityCard, email, role, gender, accountType
+      username, phone, identityCard, email, role, gender, accountType
     } = body;
+
+    let { password } = body;
+    password = bcrypt.hashSync(password, HASH_DIGIT);
 
     const { _id } = auth;
 
@@ -148,13 +154,9 @@ export async function createUserService(auth, body) {
 
       const createdUser = await EmployeeModel.create(newUserInfo);
 
-      const userData = { userId, username };
-      refreshToken = jwt.sign(userData, REFRESH_KEY);
-
       const clientLoginSchema = {
         username,
         password,
-        refreshToken,
         userId,
         userInfoModel: USER_MODEL_TYPE.EMPLOYEE
       };
@@ -198,14 +200,33 @@ export async function userLoginService(body) {
 
     if (!user) return errorMessage(404, 'USER NOT FOUND!');
 
-    if (!(user?.password === password)) return errorMessage(405, 'WRONG PASSWORD!');
+    if (!bcrypt.compareSync(user?.password, password)) return errorMessage(405, 'WRONG PASSWORD!');
 
     if (!user?.userId?.isActivated) return errorMessage(405, 'UNACTIVED!');
 
-    const { _id, refreshToken } = user;
+    const { _id } = user;
+    const userData = { _id, username };
+    const refreshToken = jwt.sign(userData, REFRESH_KEY);
+    user.refreshToken = refreshToken;
+    await user.save();
+
     const accessToken = generateAccessToken({ _id });
 
     return { accessToken, refreshToken };
+  } catch (error) {
+    return errorMessage(500, error);
+  }
+}
+
+export async function userLogoutService(auth) {
+  try {
+    const { _id } = auth;
+    const loginData = await UserLoginModel.findOne({ userId: _id });
+    if (!loginData) return errorMessage(404, 'NOT FOUND!');
+    loginData.refreshToken = null;
+    await loginData.save();
+
+    return true;
   } catch (error) {
     return errorMessage(500, error);
   }
@@ -226,11 +247,11 @@ export async function getUserInfoService(auth) {
 export async function getListUserService(skip, limit) {
   try {
     const [payload, count] = await Promise.all([
-      AccountModel.find({}).populate('userId')
+      AccountModel.find({ userInfoModel: USER_MODEL_TYPE.USER }).populate('userId')
       .skip(skip)
       .limit(limit)
       .lean(),
-      AccountModel.countDocuments({}),
+      AccountModel.countDocuments({ userInfoModel: USER_MODEL_TYPE.USER }),
     ]);
 
     return [count, payload];
@@ -241,10 +262,10 @@ export async function getListUserService(skip, limit) {
 
 export async function sendMailForgotPasswordService(username) {
   try {
-    const hasUser = await UserLoginModel.findOne({ username }).lean();
+    const hasUser = await UserLoginModel.findOne({ username }).populate('userId').lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
-    const { fullName, email, _id } = hasUser;
+    const { fullName, email, _id } = hasUser.userId;
 
     // Generate OTP
     const otp = await generateOTPService(_id, 'Forgot Password');
@@ -275,8 +296,9 @@ export async function forgotPasswordService(username, otp, newPass) {
     const currentTime = moment();
     if (hasOTP?.expiredTime < currentTime) { return errorMessage(405, 'OTP Expired!'); }
 
+    const hashPass = bcrypt.hashSync(newPass, HASH_DIGIT);
     const { _id } = hasOTP.userId;
-    await UserInfoModel.findByIdAndUpdate(_id, { password: newPass });
+    await UserLoginModel.findByIdAndUpdate(_id, { password: hashPass });
 
     await UserOTPModel.findByIdAndDelete(hasOTP._id);
 
@@ -292,9 +314,10 @@ export async function changePasswordService(auth, oldPass, newPass) {
     const hasUser = await UserLoginModel.findOne({ userId: _id }).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
-    if (hasUser?.password !== oldPass) return errorMessage(405, 'WRONG OLD PASSWORD!');
+    if (!bcrypt.compareSync(hasUser?.password, oldPass)) return errorMessage(405, 'WRONG OLD PASSWORD!');
 
-    await UserLoginModel.findOneAndUpdate({ userId: _id }, { password: newPass });
+    const hashPass = bcrypt.hashSync(newPass);
+    await UserLoginModel.findOneAndUpdate({ userId: _id }, { password: hashPass });
 
     return true;
   } catch (error) {
