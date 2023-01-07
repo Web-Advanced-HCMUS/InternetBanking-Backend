@@ -8,7 +8,7 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'INTERNET BANKNG FINAL PROJECT DOCS',
   },
-  host: `localhost:${PORT}`,
+  host: 'timo-clone-internet-banking.onrender.com',
   basePath: '/',
   produces: ['application/json'],
   consumes: ['application/json'],
