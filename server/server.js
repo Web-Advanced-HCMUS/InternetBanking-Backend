@@ -55,7 +55,6 @@ app.use(
 
 app.use(
   '/api-docs-public',
-  BasicAuth({ users: { [USER_API_DOCS]: PASS_API_DOCS }, challenge: true }),
   swaggerUI.serveFiles(swaggerPublic, {}),
   swaggerUI.setup(swaggerPublic)
 );
