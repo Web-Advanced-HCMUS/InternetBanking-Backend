@@ -239,9 +239,9 @@
 
 /**
  * @swagger
- * /user/get-list-user:
+ * /user/for-control:
  *   get:
- *     summary: Lấy danh sách người dùng (Admin)
+ *     summary: Lấy danh sách người dùng (Employee)
  *     tags:
  *       - User Info
  *     parameters:

@@ -14,22 +14,38 @@ router.route('/create-emp-account')
 
 router.route('/get-emp-list')
   .get(
-    isAdmin()
+    isAdmin(),
+    AdminController.getListEmployeeController
   );
 
 router.route('/update-emp/:empId')
   .put(
-    isAdmin()
+    isAdmin(),
+    AdminController.updateEmployeeController
   );
 
 router.route('/delete-emp/:empId')
   .delete(
-    isAdmin()
+    isAdmin(),
+    AdminController.deleteEmployeeController
+  );
+
+router.route('/for-control-filter-helper/:index')
+  .post(
+    isAdmin(),
+    AdminController.getFilterHelperController
   );
 
 router.route('/for-control')
   .post(
-    isAdmin()
+    isAdmin(),
+    AdminController.forControlListController
+  );
+
+router.route('/for-control-total-amount')
+  .post(
+    isAdmin(),
+    AdminController.totalTransactionAmountService
   );
 
 export default router;
