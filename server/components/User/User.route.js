@@ -26,7 +26,7 @@ router.route('/login')
   );
 
 router.route('/logout')
-  .get(
+  .post(
     authorized(),
     UserInfoController.userLogoutController
   );

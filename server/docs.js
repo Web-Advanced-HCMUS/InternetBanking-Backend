@@ -1,6 +1,6 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 
-const { PORT } = process.env;
+const { API_DOCS_HOST } = process.env;
 
 const swaggerDefinition = {
   info: {
@@ -8,7 +8,7 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'INTERNET BANKNG FINAL PROJECT DOCS',
   },
-  host: 'timo-clone-internet-banking.onrender.com',
+  host: API_DOCS_HOST,
   basePath: '/',
   produces: ['application/json'],
   consumes: ['application/json'],

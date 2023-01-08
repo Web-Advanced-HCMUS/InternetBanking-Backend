@@ -161,7 +161,6 @@
  *     summary: Đăng xuất và xóa refreshToken trong DB
  *     tags:
  *       - User Info
- *     parameters:
  *     responses:
  *       200:
  *         name: body

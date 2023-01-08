@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /admin/create:
+ * /admin/create-emp-account:
  *   post:
  *     summary: Tạo Tài khoản nhân viên
  *     tags:

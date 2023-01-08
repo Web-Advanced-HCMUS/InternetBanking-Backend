@@ -34,9 +34,9 @@ export const refreshTokenService = async (userId, refreshToken) => {
     if (!matchToken) return errorMessage(403, 'FORBIDDEN!');
 
     const user = jwt.verify(refreshToken, REFRESH_KEY);
-    const { _id } = user;
+    const { _id, username } = user;
 
-    const accessToken = generateAccessToken({ _id });
+    const accessToken = generateAccessToken({ _id, username });
 
     return accessToken;
   } catch (error) {
@@ -200,17 +200,18 @@ export async function userLoginService(body) {
 
     if (!user) return errorMessage(404, 'USER NOT FOUND!');
 
-    if (!bcrypt.compareSync(user?.password, password)) return errorMessage(405, 'WRONG PASSWORD!');
+    if (!bcrypt.compareSync(password, user?.password)) return errorMessage(406, 'WRONG PASSWORD!');
 
-    if (!user?.userId?.isActivated) return errorMessage(405, 'UNACTIVED!');
+    if (user?.userId?.role !== 'ADMIN' && user?.userId?.role !== 'EMPLOYEE'
+    && !user?.userId?.isActivated) return errorMessage(405, 'UNACTIVED!');
 
-    const { _id } = user;
+    const { _id } = user.userId;
     const userData = { _id, username };
     const refreshToken = jwt.sign(userData, REFRESH_KEY);
     user.refreshToken = refreshToken;
-    await user.save();
+    await UserLoginModel.findByIdAndUpdate(user?._id, { refreshToken });
 
-    const accessToken = generateAccessToken({ _id });
+    const accessToken = generateAccessToken(userData);
 
     return { accessToken, refreshToken };
   } catch (error) {
@@ -236,7 +237,9 @@ export async function getUserInfoService(auth) {
   try {
     const { _id } = auth;
 
-    const userData = await UserInfoModel.findById(_id);
+    let userData = null;
+    if (auth?.role !== 'ADMIN' && auth?.role !== 'EMPLOYEE') userData = await UserInfoModel.findById(_id).lean();
+    else userData = await EmployeeModel.findById(_id).lean();
 
     return userData;
   } catch (error) {
@@ -314,7 +317,7 @@ export async function changePasswordService(auth, oldPass, newPass) {
     const hasUser = await UserLoginModel.findOne({ userId: _id }).lean();
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
-    if (!bcrypt.compareSync(hasUser?.password, oldPass)) return errorMessage(405, 'WRONG OLD PASSWORD!');
+    if (!bcrypt.compareSync(oldPass, hasUser?.password)) return errorMessage(405, 'WRONG OLD PASSWORD!');
 
     const hashPass = bcrypt.hashSync(newPass);
     await UserLoginModel.findOneAndUpdate({ userId: _id }, { password: hashPass });

@@ -32,10 +32,11 @@ export function authorized() {
 
       const user = await UserLoginModel.findOne({ username: userData?.username }).populate('userId').lean();
       const authUser = {
-        _id: user?._id,
+        _id: userData?._id,
         username: user?.username,
         role: user?.userId?.role
       };
+      console.log({ authUser });
 
       req.auth = authUser;
       if (!req.auth) {
@@ -76,7 +77,7 @@ export function isAdmin() {
         );
       }
       const authUser = {
-        _id: user?._id,
+        _id: userData?._id,
         username: user?.username,
         role: user?.userId?.role
       };
@@ -150,7 +151,7 @@ export function isEmployee() {
 
       const user = await UserLoginModel.findOne({ username: userData?.username }).lean();
       const authUser = {
-        _id: user?._id,
+        _id: userData?._id,
         username: user?.username,
         role: user?.userId?.role
       };
