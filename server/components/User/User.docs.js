@@ -238,7 +238,7 @@
 
 /**
  * @swagger
- * /user/for-control:
+ * /user/get-list-user:
  *   get:
  *     summary: Lấy danh sách người dùng (Employee)
  *     tags:

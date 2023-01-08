@@ -50,7 +50,7 @@ export function authorized() {
   };
 }
 
-export function isAdmin() {
+export function isEmployee() {
   return async (req, res, next) => {
     const authorization = req.header('Authorization');
     if (typeof authorization !== 'string') {
@@ -129,7 +129,7 @@ export function verifyTokenUsingSecretKey() {
   };
 }
 
-export function isEmployee() {
+export function isAdmin() {
   return async (req, res, next) => {
     const authorization = req.header('Authorization');
     if (typeof authorization !== 'string') {

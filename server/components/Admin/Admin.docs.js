@@ -313,7 +313,7 @@
 
 /**
  * @swagger
- * /admin/get-emp-list:
+ * /admin/for-control:
  *   post:
  *     summary: Lấy danh sách Đối soát
  *     tags:
