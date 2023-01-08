@@ -1,11 +1,11 @@
-import * as UserInfoService from './User.service.js';
+import * as UserInfoService from "./User.service.js";
 
-import { pagingQuery } from '../../utils/pagingQueryHadle.js';
+import { pagingQuery } from "../../utils/pagingQueryHadle.js";
 
 export async function refreshTokenController(req, res) {
   try {
-    const { refreshToken, userId } = req.query;
-    const payload = await UserInfoService.refreshTokenService(userId, refreshToken);
+    const { refreshToken } = req.query;
+    const payload = await UserInfoService.refreshTokenService(refreshToken);
 
     return res.RH.success(payload);
   } catch (error) {
@@ -15,8 +15,8 @@ export async function refreshTokenController(req, res) {
 
 export async function createUserController(req, res) {
   try {
-    const { body, auth } = req;
-    const payload = await UserInfoService.createUserService(auth, body);
+    const { body } = req;
+    const payload = await UserInfoService.createUserService(body);
 
     return res.RH.success(payload);
   } catch (error) {
@@ -44,6 +44,7 @@ export async function userLoginController(req, res) {
     const result = await UserInfoService.userLoginService(body);
     return res.RH.success(result);
   } catch (error) {
+    console.log(error);
     return res.RH.error(error);
   }
 }
