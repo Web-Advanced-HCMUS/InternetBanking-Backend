@@ -58,12 +58,10 @@
  *     parameters:
  *       - name: userId
  *         in: query
- *         required: true
  *         description: Id Account người dùng
  *         type: MongoId
  *       - name: otp
  *         in: query
- *         required: true
  *         description: Mã OTP nhận được từ Email
  *         type: String
  *     responses:

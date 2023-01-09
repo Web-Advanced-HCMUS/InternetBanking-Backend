@@ -78,16 +78,16 @@ export async function createUserService(auth, body) {
     const { _id } = auth;
 
     const isUsername = await UserLoginModel.findOne({ username }).lean();
-    if (isUsername) return errorMessage('Username existed!');
+    if (isUsername) return errorMessage(406, 'Username existed!');
 
     const isEmail = await UserInfoModel.findOne({ email }).lean();
-    if (isEmail) return errorMessage('Email existed!');
+    if (isEmail) return errorMessage(406, 'Email existed!');
 
     const isPhone = await UserInfoModel.findOne({ phone }).lean();
-    if (isPhone) return errorMessage('Phone Number existed!');
+    if (isPhone) return errorMessage(406, 'Phone Number existed!');
 
     const isId = await UserInfoModel.findOne({ identityCard }).lean();
-    if (isId) return errorMessage('Identity Card ID Number existed!');
+    if (isId) return errorMessage(406, 'Identity Card ID Number existed!');
 
     let accountNumber = autoGenAccountNumber();
     const isAccNumber = await UserInfoModel.findOne({ accountNumber }).lean();
@@ -104,18 +104,13 @@ export async function createUserService(auth, body) {
     };
 
     let userId = null;
-    let refreshToken = null;
     if (role === USER_ROLE.CLIENT) {
       const createdUser = await UserInfoModel.create(newUserInfo);
       userId = createdUser?._id;
 
-      const userData = { userId, username };
-      refreshToken = jwt.sign(userData, REFRESH_KEY);
-
       const clientLoginSchema = {
         username,
         password,
-        refreshToken,
         userId,
         userInfoModel: USER_MODEL_TYPE.USER
       };
@@ -128,13 +123,8 @@ export async function createUserService(auth, body) {
         createBy: _id
       };
 
-      await Promise.all([
-        UserLoginModel.create(clientLoginSchema),
-        AccountModel.create(accountSchema)
-      ]);
-
       // Generate OTP
-      const otp = await generateOTPService(userId, 'Verify Account');
+      const otp = await generateOTPService(userId);
 
       await nodeMailerSendEmail(
         'Banking Recovery Auto Mail',
@@ -143,6 +133,11 @@ export async function createUserService(auth, body) {
         'Create Account Confirmation OTP',
         createAccountOTPMail(body?.fullName, otp)
       );
+
+      await Promise.all([
+        UserLoginModel.create(clientLoginSchema),
+        AccountModel.create(accountSchema)
+      ]);
     } else {
       newUserInfo.role = USER_ROLE[role];
 
@@ -150,7 +145,7 @@ export async function createUserService(auth, body) {
       const isEmpId = await EmployeeModel.findOne({ empId }).lean();
       if (isEmpId) empId = autoGenEmpId();
 
-      newUserInfo.empId = empId;
+      newUserInfo.empId = empId.trim();
 
       const createdUser = await EmployeeModel.create(newUserInfo);
 
@@ -271,9 +266,10 @@ export async function sendMailForgotPasswordService(username) {
     const { fullName, email, _id } = hasUser.userId;
 
     // Generate OTP
-    const otp = await generateOTPService(_id, 'Forgot Password');
+    const otp = await generateOTPService(_id);
 
     await nodeMailerSendEmail(
+      fullName,
       email,
       'Banking Recovery Auto Mail',
       'Password Recovery',
@@ -292,16 +288,17 @@ export async function forgotPasswordService(username, otp, newPass) {
     const hasOTP = await UserOTPModel.findOne({ otp })
       .populate('userId')
       .lean();
+
     if (!hasOTP) return errorMessage(405, 'Wrong OTP');
 
-    if (hasOTP?.userId?.username !== username) { return errorMessage(405, 'Wrong OTP'); }
+    const findLogin = await UserLoginModel.findOne({ username });
+    if (hasOTP?.userId?._id.toString() !== findLogin?.userId.toString()) return errorMessage(405, 'OTP not match!');
 
     const currentTime = moment();
-    if (hasOTP?.expiredTime < currentTime) { return errorMessage(405, 'OTP Expired!'); }
+    if (hasOTP?.expiredTime < currentTime) return errorMessage(405, 'OTP Expired!');
 
     const hashPass = bcrypt.hashSync(newPass, HASH_DIGIT);
-    const { _id } = hasOTP.userId;
-    await UserLoginModel.findByIdAndUpdate(_id, { password: hashPass });
+    await UserLoginModel.findOneAndUpdate({ username }, { password: hashPass });
 
     await UserOTPModel.findByIdAndDelete(hasOTP._id);
 

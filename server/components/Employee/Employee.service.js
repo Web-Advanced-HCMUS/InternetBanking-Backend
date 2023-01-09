@@ -20,7 +20,7 @@ const SORT_ORDER = {
 
 const KEY_ACCOUNT = {
   SEND: 'fromAccountNumber',
-  RECEIVE: 'fromAccountNumber',
+  RECEIVE: 'toAccountNumber',
   DEBT: 'debtorAccountNumber'
 };
 
@@ -84,6 +84,7 @@ export async function accountRechargeService(auth, body) {
         const accounts = accountInfo.map((e) => e?.accountNumber);
         return { message: 'Choose one Account', accounts };
       }
+      accountInfo = accountInfo[0];
     }
 
     const accountId = accountInfo?._id;
@@ -91,8 +92,8 @@ export async function accountRechargeService(auth, body) {
     const rechargeSchema = {
       fromAccountNumber: null,
       fromAccountOwnerName: emp?.empId,
-      toAccountOwnerName: accountInfo?.accountNumber,
-      toAccountNumber: accountInfo.accountOwnerName,
+      toAccountOwnerName: accountInfo?.accountOwnerName,
+      toAccountNumber: accountInfo.accountNumber,
       bank: 'TIMO',
       transactionType: TRANSACTION_TYPE.RECHARGE,
       feePaymentMethod: FEE_PAID_TYPE.NO,
@@ -125,13 +126,13 @@ export async function transactionHistoryService(type, order, body, skip, limit) 
 
     const matchCond = { $and: [{ [KEY_TIME[type]]: { $lte: toDate } }, { [KEY_ACCOUNT[type]]: accountNumber }] };
     if (fromDate) matchCond.$and.push({ [KEY_TIME[type]]: { $gte: fromDate } });
-
+    // return [matchCond];
     switch (type) {
       case LIST_TRANSACTION_TYPE.SEND:
       case LIST_TRANSACTION_TYPE.RECEIVE: {
         [count, payload] = await Promise.all([
           TransactionModel.countDocuments(matchCond),
-          TransactionModel.find(matchCond).sort(SORT_ORDER[order])
+          TransactionModel.find(matchCond).sort({ time: SORT_ORDER[order] })
             .skip(skip).limit(limit)
             .lean()
         ]);
@@ -140,7 +141,7 @@ export async function transactionHistoryService(type, order, body, skip, limit) 
       case LIST_TRANSACTION_TYPE.DEBT: {
         [count, payload] = await Promise.all([
           DebtModel.countDocuments(matchCond),
-          DebtModel.find(matchCond).sort(SORT_ORDER[order])
+          DebtModel.find(matchCond).sort({ time: SORT_ORDER[order] })
             .skip(skip).limit(limit)
             .lean()
         ]);
@@ -152,6 +153,7 @@ export async function transactionHistoryService(type, order, body, skip, limit) 
 
     return [count, payload];
   } catch (error) {
+    console.log(error);
     return errorMessage(500, error);
   }
 }

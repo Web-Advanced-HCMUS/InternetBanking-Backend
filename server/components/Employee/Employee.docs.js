@@ -206,13 +206,11 @@
  *         type: String
  *         enum: [SEND,RECEIVE,DEBT]
  *         description: Loại danh sách muốn lấy
- *         required: true
  *       - name: order
  *         in: path
  *         type: String
  *         enum: [asc,desc]
  *         description: Thứ tự sắp xếp của ngày
- *         required: true
  *       - name: body
  *         in: body
  *         required: true

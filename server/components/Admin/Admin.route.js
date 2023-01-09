@@ -8,7 +8,7 @@ const router = new Router();
 
 router.route('/create-emp-account')
   .post(
-    // isAdmin(),
+    isAdmin(),
     AdminController.createEmployeeAccountController
   );
 

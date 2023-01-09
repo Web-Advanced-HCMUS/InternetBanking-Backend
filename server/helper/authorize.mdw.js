@@ -36,7 +36,6 @@ export function authorized() {
         username: user?.username,
         role: user?.userId?.role
       };
-      console.log({ authUser });
 
       req.auth = authUser;
       if (!req.auth) {
@@ -157,6 +156,7 @@ export function isAdmin() {
       };
 
       req.auth = authUser;
+      console.log(req.auth);
       if (!req.auth) {
         return next(
           new APIError(401, { access: false, message: 'Unauthorized' })
