@@ -7,8 +7,10 @@ import * as UserInfoValidator from "../User/User.validator.js";
 import * as UserInfoController from "../User/User.controller.js";
 
 import { isEmployee } from "../../helper/authorize.mdw.js";
+import { body } from "express-validator";
 
 const router = new Router();
+
 
 router.route("/create").post(
   // // isEmployee(),
@@ -28,13 +30,14 @@ router
 router
   .route("/customer-recharge")
   .post(
-    isEmployee(),
+    //isEmployee(),
     EmployeeValidator.getRechargeInfoValidator,
     EmployeeController.accountRechargeController
   );
 
 router
   .route("/single-transfer-history/:type/:order")
-  .post(isEmployee(), EmployeeController.transactionHistoryController);
+  .post(//isEmployee(), 
+  EmployeeController.transactionHistoryController);
 
 export default router;

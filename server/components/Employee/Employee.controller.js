@@ -15,7 +15,9 @@ export async function addPaymentAccountController(req, res) {
 
 export async function accountRechargeController(req, res) {
   try {
-    const { body, auth } = req;
+    //const {body, auth} = req
+    const { body } = req;
+    const auth = {};
     const result = await EmployeeService.accountRechargeService(auth, body);
 
     return res.RH.success(result);
@@ -26,12 +28,13 @@ export async function accountRechargeController(req, res) {
 
 export async function transactionHistoryController(req, res) {
   try {
-    const { page, skip, limit } = pagingQuery(req);
-    const { body } = req;
+    //const { page, skip, limit } = pagingQuery(req);
+    //const { body } = req;
     const { type, order } = req.params;
-    const payload = await EmployeeService.transactionHistoryService(type, order, body, skip, limit);
+    //const payload = await EmployeeService.transactionHistoryService(type, order, body, skip, limit);
+    const payload = await EmployeeService.transactionHistoryService(type, order);
 
-    return res.RH.paging(payload, page, limit);
+    return res.RH.success(payload);
   } catch (error) {
     return res.RH.error(error);
   }

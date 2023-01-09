@@ -66,9 +66,8 @@ export async function addPaymentAccountService(auth, body) {
 export async function accountRechargeService(auth, body) {
   try {
     const { userInfo, amount } = body;
-    const { _id } = auth;
-
-    const emp = await EmployeeModel.findById(_id);
+    //const { _id } = auth;
+    //const emp = await EmployeeModel.findById(_id);
 
     const [findAccount, findUsername] = await Promise.all([
       AccountModel.findOne({ accountNumber: userInfo }),
@@ -86,13 +85,14 @@ export async function accountRechargeService(auth, body) {
       }
     }
 
-    const accountId = accountInfo?._id;
+    const accountId = accountInfo[0]?._id;
 
     const rechargeSchema = {
       fromAccountNumber: null,
-      fromAccountOwnerName: emp?.empId,
-      toAccountOwnerName: accountInfo?.accountNumber,
-      toAccountNumber: accountInfo.accountOwnerName,
+      // fromAccountOwnerName: emp?.empId,
+      fromAccountOwnerName: "11111111111",
+      toAccountOwnerName: accountInfo[0]?.accountOwnerName,
+      toAccountNumber: accountInfo[0].accountNumber,
       bank: 'TIMO',
       transactionType: TRANSACTION_TYPE.RECHARGE,
       feePaymentMethod: FEE_PAID_TYPE.NO,
@@ -101,7 +101,10 @@ export async function accountRechargeService(auth, body) {
       status: TRANSACTION_STATUS.SUCCESS,
     };
 
-    const amountUpdate = Number(accountInfo?.currentBalance) + Number(amount);
+    console.log(accountInfo)
+    const amountUpdate = Number(accountInfo[0]?.currentBalance) + Number(amount);
+    //const amountUpdate = Number(amount);
+
 
     await Promise.all([
       TransactionModel.create(rechargeSchema),
@@ -114,43 +117,70 @@ export async function accountRechargeService(auth, body) {
   }
 }
 
-export async function transactionHistoryService(type, order, body, skip, limit) {
+// export async function transactionHistoryService(type, order, body, skip, limit) {
+export async function transactionHistoryService(type, order) {
   try {
-    const {
-      fromDate, toDate = new Date(), accountNumber
-    } = body;
+    // const {
+    //   fromDate, toDate = new Date(), accountNumber
+    // } = body;
 
-    let count = 0;
+    //let count = 0;
     let payload = [];
 
-    const matchCond = { $and: [{ [KEY_TIME[type]]: { $lte: toDate } }, { [KEY_ACCOUNT[type]]: accountNumber }] };
-    if (fromDate) matchCond.$and.push({ [KEY_TIME[type]]: { $gte: fromDate } });
+    // const matchCond = { $and: [{ [KEY_TIME[type]]: { $lte: toDate } }, { [KEY_ACCOUNT[type]]: accountNumber }] };
+    // if (fromDate) matchCond.$and.push({ [KEY_TIME[type]]: { $gte: fromDate } });
+
+    // switch (type) {
+    //   case LIST_TRANSACTION_TYPE.SEND:
+    //   case LIST_TRANSACTION_TYPE.RECEIVE: {
+    //     [count, payload] = await Promise.all([
+    //       TransactionModel.countDocuments(matchCond),
+    //       TransactionModel.find(matchCond).sort(SORT_ORDER[order])
+    //         .skip(skip).limit(limit)
+    //         .lean()
+    //     ]);
+    //     break;
+    //   }
+    //   case LIST_TRANSACTION_TYPE.DEBT: {
+    //     [count, payload] = await Promise.all([
+    //       DebtModel.countDocuments(matchCond),
+    //       DebtModel.find(matchCond).sort(SORT_ORDER[order])
+    //         .skip(skip).limit(limit)
+    //         .lean()
+    //     ]);
+    //     break;
+    //   }
+    //   default:
+    //     return errorMessage(404, 'INVALID TYPE');
+    // }
 
     switch (type) {
       case LIST_TRANSACTION_TYPE.SEND:
       case LIST_TRANSACTION_TYPE.RECEIVE: {
-        [count, payload] = await Promise.all([
-          TransactionModel.countDocuments(matchCond),
-          TransactionModel.find(matchCond).sort(SORT_ORDER[order])
-            .skip(skip).limit(limit)
-            .lean()
-        ]);
+        // [count, payload] = await Promise.all([
+        //   TransactionModel.countDocuments(matchCond),
+        //   TransactionModel.find(matchCond).sort(SORT_ORDER[order])
+        //     .lean()
+        // ]);
+        payload = await TransactionModel.find({}).sort({time: SORT_ORDER["desc"]}).lean();
+
         break;
       }
       case LIST_TRANSACTION_TYPE.DEBT: {
-        [count, payload] = await Promise.all([
-          DebtModel.countDocuments(matchCond),
-          DebtModel.find(matchCond).sort(SORT_ORDER[order])
-            .skip(skip).limit(limit)
-            .lean()
-        ]);
+        // [count, payload] = await Promise.all([
+        //   DebtModel.countDocuments(matchCond),
+        //   DebtModel.find(matchCond).sort(SORT_ORDER[order])
+        //     .lean()
+        // ]);
+        payload = await DebtModel.find({status: 'complete'}).sort({endDate: SORT_ORDER["desc"]}).lean();
         break;
       }
       default:
         return errorMessage(404, 'INVALID TYPE');
     }
 
-    return [count, payload];
+    //return [count, payload];
+    return payload;
   } catch (error) {
     return errorMessage(500, error);
   }
