@@ -52,6 +52,7 @@ export async function userLoginController(req, res) {
 export async function userLogoutController(req, res) {
   try {
     const { auth } = req;
+    console.log(auth);
     const result = await UserInfoService.userLogoutService(auth);
     return res.RH.success(result);
   } catch (error) {

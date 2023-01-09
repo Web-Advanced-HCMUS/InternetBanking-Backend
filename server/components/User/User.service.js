@@ -1,6 +1,7 @@
 import moment from "moment";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 
 import { errorMessage } from "../../utils/error.js";
 
@@ -223,7 +224,8 @@ export async function userLoginService(body) {
     const { userId } = user;
     const { _id } = userId;
 
-    const userData = { userID: _id, username: userId.username };
+    const userData = { userID: _id };
+
     const refreshToken = jwt.sign(userData, REFRESH_KEY);
     // user.refreshToken = refreshToken;
     // await user.save();
@@ -240,17 +242,20 @@ export async function userLoginService(body) {
     return errorMessage(500, error);
   }
 }
+
 export async function userLogoutService(auth) {
   try {
-    const { refreshToken } = auth;
-    const id = jwt.verify(refreshToken, REFRESH_KEY);
-    const loginData = await UserLoginModel.findOne({ userId: id });
-    if (!loginData) return errorMessage(404, "NOT FOUND!");
-    loginData.refreshToken = null;
-    await loginData.save();
+    const { userId } = auth;
+    const { _id } = userId;
+    console.log(_id);
+    await UserLoginModel.findOneAndUpdate(
+      { userId: _id },
+      { refreshToken: null }
+    ).lean();
 
     return true;
   } catch (error) {
+    console.log(error);
     return errorMessage(500, error);
   }
 }
