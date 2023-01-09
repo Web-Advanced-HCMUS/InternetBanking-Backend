@@ -6,7 +6,7 @@ const TransactionSchema = new mongoose.Schema({
   fromAccountOwnerName: { type: String, require: true },
   toAccountOwnerName: { type: String, require: true },
   toAccountNumber: { type: String, require: true },
-  bank: { type: String, require: true },
+  bankCode: { type: String, require: true },
   transactionType: { type: String, enum: Object.values(TRANSACTION_TYPE), require: true },
   feePaymentMethod: { type: String, enum: Object.values(FEE_PAID_TYPE), require: true },
   amount: { type: Number, require: true },

@@ -31,7 +31,7 @@ export async function createInterbankTransaction(data, signature) {
 
     const acceptTransaction = {
       ...data,
-      bank: data.bankCode,
+      bankCode: data.bankCode,
       feePaymentMethod,
       transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
       status: TRANSACTION_STATUS.SUCCESS,
@@ -111,7 +111,7 @@ export async function verifyInternalTransaction(data) {
       fromAccountOwnerName: fromAccount.accountOwnerName,
       toAccountOwnerName: toAccount.accountOwnerName,
       transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
-      bank: BANK_CODE.MY_BANK
+      bankCode: BANK_CODE.MY_BANK
     };
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);

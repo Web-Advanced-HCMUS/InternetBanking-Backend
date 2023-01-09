@@ -111,14 +111,14 @@ export function verifyTokenUsingSecretKey() {
       );
     }
 
-    const { secretKey } = await InterbankModel.findOne({ code: bankCode });
-    if (!secretKey) {
+    const bank = await InterbankModel.findOne({ code: bankCode });
+    if (!bank) {
       return next(
         new APIError(401, 'bank is not exist in system')
       );
     }
 
-    const signServer = genHmac(req.query, secretKey);
+    const signServer = genHmac(req.query, bank.secretKey);
     if (signServer !== hmac) {
       return next(
         new APIError(401, 'hmac token is invalid')
