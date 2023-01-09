@@ -84,7 +84,7 @@ export async function getListUserController(req, res) {
 
 export async function sendMailForgotPasswordController(req, res) {
   try {
-    const { username } = req.params;
+    const { username } = req.body;
     const result = await UserInfoService.sendMailForgotPasswordService(
       username
     );
