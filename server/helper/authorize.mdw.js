@@ -148,7 +148,8 @@ export function isAdmin() {
         );
       }
 
-      const user = await UserLoginModel.findOne({ username: userData?.username }).lean();
+      const user = await UserLoginModel.findOne({ username: userData?.username }).populate('userId').lean();
+      console.log(user);
       const authUser = {
         _id: userData?._id,
         username: user?.username,
@@ -156,7 +157,6 @@ export function isAdmin() {
       };
 
       req.auth = authUser;
-      console.log(req.auth);
       if (!req.auth) {
         return next(
           new APIError(401, { access: false, message: 'Unauthorized' })

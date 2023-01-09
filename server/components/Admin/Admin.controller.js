@@ -50,7 +50,7 @@ export async function getListEmployeeController(req, res) {
 
 export async function getFilterHelperController(req, res) {
   try {
-    const { index } = req.query;
+    const { index } = req.params;
     const { body } = req;
     const payload = await AdminService.getFilterHelperService(index, body);
 

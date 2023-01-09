@@ -62,7 +62,11 @@ export async function getListEmployeeService(skip, limit) {
 
 export async function getFilterHelperService(index, body) {
   try {
-    const matchCondition = {};
+    const matchCondition = {
+      $and: [
+        { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER }
+      ]
+    };
     for (const [key, value] of Object.entries(body)) {
       if (Object.keys(FILTER_KEY).includes(key)
       && Array.isArray(value) && value.length) {
@@ -70,6 +74,7 @@ export async function getFilterHelperService(index, body) {
         matchCondition.$and.push({ [FILTER_KEY[key]]: { $in: value } });
       }
     }
+
     const result = await TransactionModel.aggregate([
       { $match: matchCondition },
       { $group: { _id: null, data: { $addToSet: `$${FILTER_KEY[index]}` } } }
@@ -87,7 +92,7 @@ export async function forControlListService(body, skip, limit) {
     const matchCondition = {
       $and: [
         { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER },
-        { time: { $lte: toDate } }
+        { time: { $lte: new Date(toDate) } }
       ]
     };
     if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: new Date(fromDate) } });
@@ -97,6 +102,7 @@ export async function forControlListService(body, skip, limit) {
         matchCondition.$and.push({ [FILTER_KEY[key]]: { $in: value } });
       }
     }
+    return [matchCondition];
 
     const [count, payload] = await Promise.all([
       TransactionModel.countDocuments(matchCondition),
@@ -124,7 +130,7 @@ export async function totalTransactionAmountService(body) {
     const matchCondition = {
       $and: [
         { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER },
-        { time: { $lte: toDate } }
+        { time: { $lte: new Date(toDate) } }
       ]
     };
     if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: new Date(fromDate) } });
