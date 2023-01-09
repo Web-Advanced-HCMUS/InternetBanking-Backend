@@ -41,7 +41,7 @@ router
   .get(isEmployee(), UserInfoController.getListUserController);
 
 router
-  .route("/send-mail-forgot-pass/:username")
+  .route("/send-mail-forgot-pass")
   .post(UserInfoController.sendMailForgotPasswordController);
 
 router.route("/forgot-pass").post(UserInfoController.forgotPasswordController);
