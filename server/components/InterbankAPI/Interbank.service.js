@@ -106,18 +106,13 @@ export async function acceptInterbankTransaction(data) {
   }
 }
 
-export async function getAccount(accountNumber, externalBankCode) {
+async function SWENQuery(interbank, accountNumber) {
   try {
-    const interBank = await InterbankModel.findOne({
-      code: externalBankCode
-    });
-    if (!interBank) throw new APIError(400, 'Bank does not be linked in system before');
-
     const time = Date.now();
     const bankCode = BANK_CODE.MY_BANK;
-    const hmac = genHmacSWENBank({ time, bankCode }, interBank.secretKey);
+    const hmac = genHmacSWENBank({ time, bankCode }, interbank.secretKey);
 
-    const res = await axios.get('http://143.198.218.103:3030/Api/GetInformationAccount', {
+    const res = await axios.get(interbank.queryAPI, {
       params: {
         time,
         bankCode,
@@ -126,54 +121,103 @@ export async function getAccount(accountNumber, externalBankCode) {
       }
     });
 
-    if (res.data.status !== 'success') return new APIError(400, "Account number doesn't exist");
+    return res.data;
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
+}
 
-    return res.data.data;
+export async function getAccount(accountNumber, externalBankCode) {
+  try {
+    const interbank = await InterbankModel.findOne({
+      code: externalBankCode
+    });
+    if (!interbank) throw new APIError(400, 'Bank does not be linked in system before');
+
+    let data = null;
+    let account = {};
+
+    switch (interbank.code) {
+      case 'SWEN':
+        data = await SWENQuery(interbank, accountNumber);
+        if (data.status !== 'success') return new APIError(400, "Account number doesn't exist");
+        account = data.data;
+        break;
+      default:
+        return new APIError(400, 'Query fail, wrong url');
+    }
+
+    return account;
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
+}
+
+async function SWENRequest(interbank, requestBody){
+  try {
+    const data = {
+      source_account_number: requestBody.fromAccountNumber,
+      source_owner_name: requestBody.fromAccountOwnerName,
+      destination_account_number: requestBody.toAccountNumber,
+      destination_owner_name: requestBody.toAccountNumber,
+      amount: requestBody.amount,
+      fee: requestBody.fee,
+      note: requestBody.content
+    };
+
+    const signature = await getSWENSignature(data, process.env.PRIVATE_KEY.replace(/\\n/g, '\n'));
+
+    const time = Date.now();
+    const bankCode = BANK_CODE.MY_BANK;
+    const hmac = genHmacSWENBank({ time, bankCode }, interbank.secretKey);
+
+    const res = await axios.post(interbank.transferAPI, { data, signature }, {
+      params: {
+        time,
+        bankCode,
+        hmac
+      }
+    });
+
+    const [err, validSignature] = await HandleRequest(verifySWENSignature(JSON.stringify(res.data.data), res.data.signature, res.data.public_key));
+    if (err) throw new APIError(err.statusCode, err.message);
+    if (!validSignature) throw new APIError(400, 'Signature from interbank is invalid, cancel transaction');
+
+    return {
+      ...res.data,
+      interbankData: JSON.stringify(data.data)
+    };
   } catch (error) {
     throw new APIError(error.statusCode || error.code || 500, error.message);
   }
 }
 
 export async function makeTransferRequest(requestBody) {
-  const data = {
-    source_account_number: requestBody.fromAccountNumber,
-    source_owner_name: requestBody.fromAccountOwnerName,
-    destination_account_number: requestBody.toAccountNumber,
-    destination_owner_name: requestBody.toAccountNumber,
-    amount: requestBody.amount,
-    fee: requestBody.fee,
-    note: requestBody.content
-  };
+  try {
+    const interbank = await InterbankModel.findOne({
+      code: requestBody.bankCode
+    });
 
-  const interBank = await InterbankModel.findOne({
-    code: requestBody.bankCode
-  });
-  const signature = await getSWENSignature(data, process.env.PRIVATE_KEY.replace(/\\n/g, '\n'));
+    let data = null;
 
-  const time = Date.now();
-  const bankCode = BANK_CODE.MY_BANK;
-  const hmac = genHmacSWENBank({ time, bankCode }, interBank.secretKey);
-
-  const res = await axios.post('http://143.198.218.103:3030/Api/DepositAccount', { data, signature }, {
-    params: {
-      time,
-      bankCode,
-      hmac
+    switch (interbank.code) {
+      case 'SWEN':
+        data = await SWENRequest(interbank, requestBody);
+        if (data.status !== 'success') return new APIError(200, 'Transfer fail');
+        break;
+      default:
+        return new APIError(400, 'Transfer fail, wrong url');
     }
-  });
 
-  const [err, validSignature] = await HandleRequest(verifySWENSignature(JSON.stringify(res.data.data), res.data.signature, res.data.public_key));
-  if (err) throw new APIError(err.statusCode, err.message);
-  if (!validSignature) throw new APIError(400, 'Signature from interbank is invalid, cancel transaction');
-
-  if (res.data.status !== 'success') return new APIError(200, 'Transfer fail');
-
-  return {
-    ...requestBody,
-    status: TRANSACTION_STATUS.SUCCESS,
-    interbankData: JSON.stringify(res.data.data).toString(),
-    signature: res.data.signature
-  };
+    return {
+      ...requestBody,
+      status: TRANSACTION_STATUS.SUCCESS,
+      interbankData: data.interbankData,
+      signature: data.signature
+    };
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
 }
 
 export async function verifyInterbankTransfer(req) {
