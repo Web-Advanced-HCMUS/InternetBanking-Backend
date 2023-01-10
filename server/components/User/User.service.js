@@ -209,7 +209,9 @@ export async function userLoginService(body) {
 
     const accessToken = generateAccessToken(userData);
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken, refreshToken, _id, username
+    };
   } catch (error) {
     return errorMessage(500, error);
   }
