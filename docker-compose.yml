@@ -1,0 +1,7 @@
+version: '3'
+services:
+  internet-banking-server:
+    image: huynhducle20000/project-internet-banking
+    ports:
+      - 8000:3000
+    restart: unless-stopped
