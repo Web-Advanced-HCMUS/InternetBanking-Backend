@@ -40,13 +40,13 @@ export async function sendTransactionOTP(userId, amount) {
         const [err, otp] = await HandleRequest(getOTP(user._id, 2));
         if (err) throw new APIError(err.statusCode, err.message);
 
-        // await nodeMailerSendEmail(
-        //     user.email,
-        //     'Internet Banking OTP',
-        //     null,
-        //     transactionOTPMail(otp, amount),
-        //     null
-        // );
+        await nodeMailerSendEmail(
+            user.email,
+            'Internet Banking OTP',
+            null,
+            transactionOTPMail(otp, amount),
+            null
+        );
 
         return { message: `OTP sent successfully ${otp}` };
     } catch (error) {
