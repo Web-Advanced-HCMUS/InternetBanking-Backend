@@ -14,7 +14,7 @@ import { swaggerSpec, swaggerPublic } from './docs.js';
 import logger from './logger.js';
 
 const {
- PORT, USER_API_DOCS, PASS_API_DOCS, MONGO_URI
+ PORT, USER_API_DOCS, PASS_API_DOCS, MONGO_URI, USER_PULBIC_API_DOCS, PASS_PULBIC_API_DOCS
 } = process.env;
 
 const app = new Express();
@@ -55,7 +55,8 @@ app.use(
 );
 
 app.use(
-  '/api-docs-public',
+  '/api-docs-for-linked-bank',
+  BasicAuth({ users: { [USER_PULBIC_API_DOCS]: PASS_PULBIC_API_DOCS }, challenge: true }),
   swaggerUI.serveFiles(swaggerPublic, {}),
   swaggerUI.setup(swaggerPublic)
 );
