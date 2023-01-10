@@ -5,7 +5,7 @@ import APIError from '../utils/APIError.js';
 import UserLoginModel from '../components/model/UserLogin.model.js';
 import InterbankModel from '../components/model/InterBank.model.js';
 
-import { genHmac } from './signHmac.js';
+import { genHmacVerifyExternalCall } from './signHmac.js';
 import { USER_MODEL_TYPE } from '../utils/constant.js';
 
 const { ACCESS_KEY, TIME_EXPIRED } = process.env;
@@ -117,7 +117,7 @@ export function verifyTokenUsingSecretKey() {
       );
     }
 
-    const signServer = genHmac(req.query, bank.secretKey);
+    const signServer = genHmacVerifyExternalCall(req.query, bank.secretKey);
     if (signServer !== hmac) {
       return next(
         new APIError(401, 'hmac token is invalid')
