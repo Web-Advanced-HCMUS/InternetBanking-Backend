@@ -47,7 +47,7 @@ export async function deleteEmployeeService(empId) {
 
 export async function getListEmployeeService(skip, limit) {
   try {
-    const [payload, count] = await Promise.all([
+    const [count, payload] = await Promise.all([
       UserLoginModel.countDocuments({ userInfoModel: USER_MODEL_TYPE.EMPLOYEE }),
       UserLoginModel.find({ userInfoModel: USER_MODEL_TYPE.EMPLOYEE }).populate('userId')
       .skip(skip).limit(limit)

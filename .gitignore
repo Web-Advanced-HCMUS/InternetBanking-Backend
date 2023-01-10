@@ -107,3 +107,4 @@ package-lock.json
 .logs/
 
 .idea
+docker-compose.yml

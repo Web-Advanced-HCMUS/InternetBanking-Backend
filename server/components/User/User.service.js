@@ -138,6 +138,8 @@ export async function createUserService(auth, body) {
         UserLoginModel.create(clientLoginSchema),
         AccountModel.create(accountSchema)
       ]);
+
+    return { userId, accountNumber };
     } else {
       newUserInfo.role = USER_ROLE[role];
 
@@ -149,6 +151,7 @@ export async function createUserService(auth, body) {
 
       const createdUser = await EmployeeModel.create(newUserInfo);
 
+      userId = createdUser?._id;
       const clientLoginSchema = {
         username,
         password,
@@ -157,10 +160,8 @@ export async function createUserService(auth, body) {
       };
       await UserLoginModel.create(clientLoginSchema);
 
-      userId = createdUser?._id;
+    return { userId, empId };
     }
-
-    return { userId, accountNumber };
   } catch (error) {
     return errorMessage(500, error);
   }

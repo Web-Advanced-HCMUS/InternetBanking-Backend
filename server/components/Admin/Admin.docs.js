@@ -143,10 +143,6 @@
  *         in: body
  *         required: true
  *         properties:
- *           username:
- *             type: String
- *           password:
- *             type: String
  *           fullName:
  *             type: String
  *           role:
@@ -164,8 +160,6 @@
  *           address:
  *             type: String
  *         example: {
- *           "username": "Huynh",
- *           "password": "hashed password",
  *           "fullName": "A Full Name",
  *           "role": "CLIENT/ADMIN/EMPLOYEE",
  *           "gender": "MALE/FEMALE/ELSE",
