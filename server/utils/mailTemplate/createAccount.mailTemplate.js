@@ -1,29 +1,18 @@
-export const createAccountOTPMail = (fullname, otp) => `<!DOCTYPE html>
-  <head>
-    <style>
-      body {
-        font-family: Calibri;
-      }
-    </style>
-  </head>
-  <body>
-    <div>
-      <p>
-        Kính chào <b>${fullname}</b>,<br>
-        <span style="padding-left: 20px">
-        Bạn tạo thành công tài khoản ngân hàng, mã OTP của bạn là: <h3>${otp}</h3>
-        </span><br><br>
-        <span style="padding-left: 20px">
-        Dùng mã này để kích hoạt tài khoản. Mã sẽ hết hạn trong vòng 10 phút.
-        </span><br><br>
-        <span style="padding-left: 20px">
-        vui lòng không chia sẽ mã này cho bất kì ai. Xin chân thành cảm ơn!
-        </span><br><br>
-        <span style="padding-left: 20px">
-        <i>Đây là email tự động, vui lòng KHÔNG REPLY lại email này!</i>
-        </span><br><br>
-        Thanks & Best Regards.
-      </p>        
+export const createAccountOTPMail = (fullname, otp) => `
+<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+  <div style="margin:50px auto;width:70%;padding:20px 0">
+    <div style="border-bottom:1px solid #eee">
+      <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Timo Digital Bank</a>
     </div>
-  </body>
-  </html>`;
+    <p style="font-size:1.1em">Kính chào,${fullname}</p>
+    <p>Bạn tạo thành công tài khoản ngân hàng, mã OTP của bạn là:</p>
+    <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
+    <p style="font-size:0.9em;">Dùng mã này để kích hoạt tài khoản. Mã sẽ hết hạn trong vòng 10 phút.<br/>Vui lòng không chia sẽ mã này cho bất kì ai. Xin chân thành cảm ơn!<br />Đây là email tự động, vui lòng KHÔNG REPLY lại email này!</p>
+    <hr style="border:none;border-top:1px solid #eee" />
+    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+      <p>Timo Digital Inc</p>
+      <p>227 Nguyen Van Cu, Ho Chi Minh City</p>
+      <p>Vietnam</p>
+    </div>
+  </div>
+</div>`;
