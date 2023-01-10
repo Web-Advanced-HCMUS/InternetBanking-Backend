@@ -1,11 +1,12 @@
 import Express from 'express';
-import http from 'http';
+import http, { createServer } from 'http';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import swaggerUI from 'swagger-ui-express';
 import BasicAuth from 'express-basic-auth';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import { Server } from 'socket.io';
 import ResponseHandler from './utils/respone.js';
 import errorHandle from './utils/errorHandle.js';
 import apis from './endpoint.js';
@@ -84,6 +85,30 @@ const httpServer = http.createServer(app, (req, res) => {
     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
   });
   res.end('Hi there!');
+});
+
+const io = new Server(httpServer, { cors: { origin: '*' } });
+let userOnline = [];
+const addNewUser = (accountNumber, userId, socketId) => {
+    !userOnline.some((user) => user.accountNumber === accountNumber)
+        && userOnline.push({ accountNumber, userId, socketId });
+};
+const removeUser = (socketId) => {
+    userOnline = userOnline.filter((user) => user.socketId !== socketId);
+};
+io.listen(httpServer);
+app.set('socket_io', io);
+app.set('user_online', userOnline);
+io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+        removeUser(socket.id);
+        app.set('user_online', userOnline);
+    });
+
+    socket.on('online', (user) => {
+        addNewUser(user.accountNumber, user.userId, socket.id);
+        app.set('user_online', userOnline);
+    });
 });
 
 httpServer.listen(PORT, async (error) => {
