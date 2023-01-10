@@ -193,14 +193,6 @@
  *     tags:
  *       - Employee
  *     parameters:
- *       - name: page
- *         in: query
- *         type: number
- *         description: Số trang
- *       - name: limit
- *         in: query
- *         type: number
- *         description: Số lượng item trong 1 trang
  *       - name: type
  *         in: path
  *         type: String

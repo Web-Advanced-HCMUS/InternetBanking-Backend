@@ -26,12 +26,12 @@ export async function accountRechargeController(req, res) {
 
 export async function transactionHistoryController(req, res) {
   try {
-    const { page, skip, limit } = pagingQuery(req);
+    // const { page, skip, limit } = pagingQuery(req);
     const { body } = req;
     const { type, order } = req.params;
-    const payload = await EmployeeService.transactionHistoryService(type, order, body, skip, limit);
+    const payload = await EmployeeService.transactionHistoryService(type, order, body/* , skip, limit */);
 
-    return res.RH.paging(payload, page, limit);
+    return res.RH.success(payload);
   } catch (error) {
     return res.RH.error(error);
   }

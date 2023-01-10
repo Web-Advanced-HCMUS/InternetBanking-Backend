@@ -203,13 +203,16 @@ export async function userLoginService(body) {
 
     const { _id } = user.userId;
     const userData = { _id, username };
+    const role = user?.userId?.role ? user?.userId?.role : 'CLIENT';
     const refreshToken = jwt.sign(userData, REFRESH_KEY);
     user.refreshToken = refreshToken;
     await UserLoginModel.findByIdAndUpdate(user?._id, { refreshToken });
 
     const accessToken = generateAccessToken(userData);
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken, refreshToken, _id, username, role
+    };
   } catch (error) {
     return errorMessage(500, error);
   }
