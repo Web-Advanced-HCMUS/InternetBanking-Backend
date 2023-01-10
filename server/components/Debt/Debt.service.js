@@ -4,8 +4,14 @@ import * as AccountService from '../Account/Account.service.js';
 import * as TransactionService from '../Transaction/Transaction.service.js';
 import APIError from '../../utils/APIError.js';
 import { HandleRequest } from '../../utils/HandleRequest.js';
-import {BANK_CODE, DEBT_STATUS, DEBT_TYPE, FEE_PAID_TYPE, TRANSACTION_TYPE} from '../../utils/constant.js';
+import {
+ BANK_CODE, DEBT_STATUS, DEBT_TYPE, FEE_PAID_TYPE, TRANSACTION_TYPE
+} from '../../utils/constant.js';
 import * as OTPService from '../OTP/OTP.service.js';
+
+const getUserFromId = (onlineUsers, socketId) => onlineUsers.find((user) => user.socketId.toString() === socketId.toString());
+
+const getUserFromAN = (onlineUsers, accountNumber) => onlineUsers.find((user) => user.accountNumber.toString() === accountNumber.toString());
 
 export async function getList(accountNumber, debtType) {
   try {
@@ -21,7 +27,7 @@ export async function getList(accountNumber, debtType) {
   }
 }
 
-export async function createDebtPayment(data) {
+export async function createDebtPayment(req, data) {
     try {
         const { debt } = data;
 
@@ -46,10 +52,23 @@ export async function createDebtPayment(data) {
         if (err2) throw new APIError(err2.statusCode, err2.message);
         if (debtUpdateResult === 0) throw new APIError(400, 'Error occur while operate debt payment transaction');
 
-        const [err3, debtResult] = await HandleRequest(DebtModel.findById(debt._id));
+        const [err3, paidDebt] = await HandleRequest(DebtModel.findById(debt._id));
         if (err3) throw new APIError(err3.statusCode, err3.message);
 
-        return {data: debtResult};
+        const socket = req.app.get('socket_io');
+        const onlineUsers = req.app.get('user_online');
+
+        const onlineUser = getUserFromAN(onlineUsers, paidDebt.creditorAccountNumber);
+        if (onlineUser) {
+            socket.to(onlineUser.socketId)
+                .emit('pay_debt', {
+                        debtorAccountNumber: paidDebt.debtorAccountNumber,
+                        debtId: paidDebt._id,
+                        content: paidDebt.content
+                    });
+        }
+
+        return { data: paidDebt };
     } catch (error) {
         throw new APIError(error.statusCode || error.code || 500, error.message);
     }
@@ -91,8 +110,11 @@ export async function verifyDebtPaymentRequest(debtId, data) {
     }
 }
 
-export async function cancelDebt(data) {
+export async function cancelDebt(req, data) {
     try {
+        const socket = req.app.get('socket_io');
+        const onlineUsers = req.app.get('user_online');
+
         const { fromAccountNumber, content, debt } = data;
         let { status } = debt;
 
@@ -102,10 +124,28 @@ export async function cancelDebt(data) {
             if (modifiedCount === 0) throw new APIError(400, 'No change in debt, please re-check again');
 
             status = DEBT_STATUS.CANCEL;
+
+            const onlineUser = getUserFromAN(onlineUsers, debt.debtorAccountNumber);
+            if (onlineUser) {
+                socket.to(onlineUser.socketId)
+                    .emit('cancel_debt_from_creditor', {
+                        creditorAccountNumber: debt.creditorAccountNumber,
+                        debtId: debt._id,
+                        content
+                    });
+            }
         }
 
         if (fromAccountNumber === debt.debtorAccountNumber) {
-            // TODO: Send notification to creditor
+            const onlineUser = getUserFromAN(onlineUsers, debt.creditorAccountNumber);
+            if (onlineUser) {
+                socket.to(onlineUser.socketId)
+                    .emit('cancel_debt_from_debtor', {
+                        debtorAccountNumber: debt.debtorAccountNumber,
+                        debtId: debt._id,
+                        content
+                    });
+            }
         }
 
         return {
@@ -138,17 +178,31 @@ export async function verifyCancelDebtRequest(debtId, data) {
     }
 }
 
-export async function createDebt(data) {
+export async function createDebt(req, data) {
     try {
-      const acceptDebt = {
+      const acceptedDebt = {
         ...data,
         status: DEBT_STATUS.INCOMPLETE,
       };
 
-      const [err1, debtCreated] = await HandleRequest(DebtModel.create(acceptDebt));
+      const [err1, createdDebt] = await HandleRequest(DebtModel.create(acceptedDebt));
       if (err1) throw new APIError(err1.statusCode, err1.message);
 
-      return { data: debtCreated };
+      const socket = req.app.get('socket_io');
+      const onlineUsers = req.app.get('user_online');
+
+      const onlineUser = getUserFromAN(onlineUsers, createdDebt.debtorAccountNumber);
+
+      if (onlineUser) {
+          socket.to(onlineUser.socketId)
+              .emit('create_debt', {
+                  creditorAccountNumber: createdDebt.creditorAccountNumber,
+                  debtId: createdDebt._id,
+                  content: createdDebt.content
+              });
+      }
+
+        return { data: createdDebt };
     } catch (error) {
       throw new APIError(error.statusCode || error.code || 500, error.message);
     }
