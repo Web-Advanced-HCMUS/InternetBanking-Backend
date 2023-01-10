@@ -13,6 +13,7 @@ const TransactionSchema = new mongoose.Schema({
   fee: { type: Number, require: true },
   content: { type: String, require: true },
   status: { type: String, require: true, enum: Object.values(TRANSACTION_STATUS) },
+  interbankData: { type: String },
   signature: { type: String },
   time: { type: Date, default: Date.now(), require: true }
 }, { collection: 'Transactions', versionKey: false });

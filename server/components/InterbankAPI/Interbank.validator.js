@@ -25,3 +25,17 @@ export const rsaDepositValidator = [
     body('publicKey').notEmpty().withMessage('content value must not be empty'),
     validateHandler
 ];
+
+export const rsaTransferValidator = [
+    body('fromAccountNumber').notEmpty().withMessage('fromAccountNumber value must not be empty'),
+    body('fromAccountOwnerName').notEmpty().withMessage('fromAccountOwnerName value must not be empty'),
+    body('toAccountNumber').notEmpty().withMessage('toAccountNumber value must not be empty'),
+    body('toAccountOwnerName').notEmpty().withMessage('toAccountOwnerName value must not be empty'),
+    body('bankCode').notEmpty().withMessage('amount value must not be empty'),
+    body('amount').notEmpty().withMessage('amount value must not be empty'),
+    body('amount').isInt().withMessage('amount must be a number'),
+    body('fee').notEmpty().withMessage('fee value must not be empty'),
+    body('fee').isInt().withMessage('fee must be a number'),
+    body('content').notEmpty().withMessage('content value must not be empty'),
+    validateHandler
+];

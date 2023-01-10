@@ -6,7 +6,6 @@ import { HandleRequest } from '../../utils/HandleRequest.js';
 import {
  BANK_CODE, FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE
 } from '../../utils/constant.js';
-import * as InterbankService from '../InterbankAPI/Interbank.service.js';
 
 export async function getList(accountNumber, type) {
   try {
@@ -21,7 +20,24 @@ export async function getList(accountNumber, type) {
   }
 }
 
-export async function createInterbankTransaction(data, signature) {
+export async function createInterbankTransferTransaction(responseTransaction) {
+  try {
+    const feePaymentMethod = responseTransaction.fee > 0 ? FEE_PAID_TYPE.PAID_RECEIVER : FEE_PAID_TYPE.PAID_SENDER;
+    const [err1, receiverResult] = await HandleRequest(AccountService.subtractMoneyFromAccount(
+        responseTransaction.fromAccountNumber,
+        responseTransaction.amount + responseTransaction.fee
+    ));
+
+    const [err2, transaction] = await HandleRequest(TransactionModel.create({ ...responseTransaction, feePaymentMethod }));
+    if (err2) throw new APIError(err2.statusCode, err2.message);
+
+    return transaction;
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
+}
+
+export async function createInterbankDepositTransaction(data, signature) {
   try {
     const feePaymentMethod = data.fee > 0 ? FEE_PAID_TYPE.PAID_RECEIVER : FEE_PAID_TYPE.PAID_SENDER;
     const [err1, receiverResult] = await HandleRequest(AccountService.addMoneyToAccount(
