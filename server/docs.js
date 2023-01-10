@@ -4,7 +4,7 @@ const { API_DOCS_HOST } = process.env;
 
 const swaggerDefinition = {
   info: {
-    title: 'INTERNET BANKNG',
+    title: 'INTERNET BANKING',
     version: '1.0.0',
     description: 'INTERNET BANKING FINAL PROJECT DOCS',
   },
