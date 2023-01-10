@@ -6,7 +6,7 @@ const swaggerDefinition = {
   info: {
     title: 'INTERNET BANKNG',
     version: '1.0.0',
-    description: 'INTERNET BANKNG FINAL PROJECT DOCS',
+    description: 'INTERNET BANKING FINAL PROJECT DOCS',
   },
   host: API_DOCS_HOST,
   basePath: '/',
