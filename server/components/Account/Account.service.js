@@ -2,6 +2,15 @@ import { errorMessage } from '../../utils/error.js';
 import AccountModel from '../model/Account.model.js';
 import APIError from '../../utils/APIError.js';
 
+export async function getAccountFromUserId(userId) {
+  try {
+    return await AccountModel.findOne({ userId });
+  } catch (error) {
+    throw new APIError(500, error.message);
+  }
+}
+
+
 export async function getAccount(accountNumber) {
   try {
     return await AccountModel.findOne({ accountNumber });
