@@ -5,4 +5,6 @@ const router = new Router();
 
 router.get('/get-one/:accountNumber', AccountController.getAccount);
 
+router.get('/get-one-from-user/:userId', AccountController.getAccountFromUser);
+
 export default router;
