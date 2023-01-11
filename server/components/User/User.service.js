@@ -237,8 +237,17 @@ export async function getUserInfoService(auth) {
     const { _id } = auth;
 
     let userData = null;
-    if (auth?.role !== 'ADMIN' && auth?.role !== 'EMPLOYEE') userData = await UserInfoModel.findById(_id).lean();
-    else userData = await EmployeeModel.findById(_id).lean();
+    if (auth?.role !== 'ADMIN' && auth?.role !== 'EMPLOYEE') {
+      userData = await UserInfoModel.findById(_id).lean();
+      const accounts = await AccountModel.find({ userId: _id }).lean();
+
+      if (Array.isArray(accounts) && accounts.length) {
+        userData.accounts = accounts.map((e) => ({
+          accountNumber: e?.accountNumber,
+          currentBalance: e?.currentBalance
+        }));
+      } else userData.accounts = [];
+    } else userData = await EmployeeModel.findById(_id).lean();
 
     return userData;
   } catch (error) {
