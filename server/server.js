@@ -19,7 +19,7 @@ const {
 
 const app = new Express();
 app.use(cors({
-  // credentials: true, origin: "http://localhost:5001"
+  credentials: true, origin: "http://localhost:5000"
 }));
 app.use(
   morgan((tokens, req, res) => {

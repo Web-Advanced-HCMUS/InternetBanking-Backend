@@ -117,41 +117,57 @@ export async function accountRechargeService(auth, body) {
 
 export async function transactionHistoryService(type, order, body/* , skip, limit */) {
   try {
-    const {
-      fromDate, toDate = new Date(), accountNumber
-    } = body;
+    // const {
+    //   fromDate, toDate = new Date(), accountNumber
+    // } = body;
 
-    let count = 0;
+    //let count = 0;
     let payload = [];
 
-    const matchCond = { $and: [{ [KEY_TIME[type]]: { $lte: toDate } }, { [KEY_ACCOUNT[type]]: accountNumber }] };
-    if (fromDate) matchCond.$and.push({ [KEY_TIME[type]]: { $gte: fromDate } });
+    // const matchCond = { $and: [{ [KEY_TIME[type]]: { $lte: toDate } }, { [KEY_ACCOUNT[type]]: accountNumber }] };
+    // if (fromDate) matchCond.$and.push({ [KEY_TIME[type]]: { $gte: fromDate } });
     // return [matchCond];
+    // switch (type) {
+    //   case LIST_TRANSACTION_TYPE.SEND:
+    //   case LIST_TRANSACTION_TYPE.RECEIVE: {
+    //     [count, payload] = await Promise.all([
+    //       TransactionModel.countDocuments(matchCond),
+    //       TransactionModel.find(matchCond).sort({ time: SORT_ORDER[order] })
+    //         .skip(skip).limit(limit)
+    //         .lean()
+    //     ]);
+    //     break;
+    //   }
+    //   case LIST_TRANSACTION_TYPE.DEBT: {
+    //     [count, payload] = await Promise.all([
+    //       DebtModel.countDocuments(matchCond),
+    //       DebtModel.find(matchCond).sort({ time: SORT_ORDER[order] })
+    //         .skip(skip).limit(limit)
+    //         .lean()
+    //     ]);
+    //     break;
+    //   }
+    //   default:
+    //     return errorMessage(404, 'INVALID TYPE');
+    // }
+
+    //return [count, payload];
+
     switch (type) {
       case LIST_TRANSACTION_TYPE.SEND:
       case LIST_TRANSACTION_TYPE.RECEIVE: {
-        [count, payload] = await Promise.all([
-          TransactionModel.countDocuments(matchCond),
-          TransactionModel.find(matchCond).sort({ time: SORT_ORDER[order] })
-            .skip(skip).limit(limit)
-            .lean()
-        ]);
+        payload = await TransactionModel.find({}).sort({time: SORT_ORDER[order]}).lean();
+
         break;
       }
       case LIST_TRANSACTION_TYPE.DEBT: {
-        [count, payload] = await Promise.all([
-          DebtModel.countDocuments(matchCond),
-          DebtModel.find(matchCond).sort({ time: SORT_ORDER[order] })
-            .skip(skip).limit(limit)
-            .lean()
-        ]);
+        payload = await DebtModel.find({status: 'complete'}).sort({endDate: SORT_ORDER[order]}).lean();
         break;
       }
       default:
         return errorMessage(404, 'INVALID TYPE');
     }
-
-    return [count, payload];
+    return payload;
   } catch (error) {
     console.log(error);
     return errorMessage(500, error);
