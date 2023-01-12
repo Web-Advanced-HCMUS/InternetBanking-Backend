@@ -90,35 +90,25 @@ export async function forControlListService(body, skip, limit) {
   try {
     const { fromDate, toDate = new Date() } = body;
     const matchCondition = {
-      $and: [
-        { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER },
-        { time: { $lte: new Date(toDate) } }
-      ]
+      transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
+      time: { $lte: new Date(toDate) },
+      bankCode: { $exists: true }
     };
-    if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: new Date(fromDate) } });
+    if (isValidDate(fromDate)) matchCondition.time = { $gte: new Date(fromDate) };
 
-    for (const [key, value] of Object.entries(body)) {
-      if (Object.keys(FILTER_KEY).includes(key) && Array.isArray(value) && value.length) {
-        matchCondition.$and.push({ [FILTER_KEY[key]]: { $in: value } });
-      }
-    }
-    return [matchCondition];
+    // for (const [key, value] of Object.entries(body)) {
+    //   if (Object.keys(FILTER_KEY).includes(key) && Array.isArray(value) && value.length) {
+    //     matchCondition.$and.push({ [FILTER_KEY[key]]: { $in: value } });
+    //   }
+    // }
+    // return [matchCondition];
 
-    const [count, payload] = await Promise.all([
-      TransactionModel.countDocuments(matchCondition),
-      TransactionModel.find(matchCondition).sort({ time: -1 })
-        .skip(skip).limit(limit)
-        .lean()
+    const [sendPayload, receivePayload] = await Promise.all([
+      TransactionModel.find({ ...matchCondition, interbankData: { $exists: true } }).sort({ time: -1 }).lean(),
+      TransactionModel.find({ ...matchCondition, interbankData: { $exists: false } }).sort({ time: -1 }).lean()
     ]);
 
-    // let totalAmount = 0;
-    // let totalFee = 0;
-    // payload.forEach((element) => {
-    //   totalAmount += element?.amount ? element.amount : 0;
-    //   totalFee += element?.fee ? element.fee : 0;
-    // });
-
-    return [count, payload];
+    return { sendPayload, receivePayload };
   } catch (error) {
     return errorMessage(500, error);
   }
