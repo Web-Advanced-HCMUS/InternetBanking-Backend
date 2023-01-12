@@ -10,7 +10,7 @@ import { USER_MODEL_TYPE, TRANSACTION_TYPE } from '../../utils/constant.js';
 import { isValidDate } from '../../helper/date.js';
 
 const FILTER_KEY = {
-  bank: 'bank'
+  bank: 'bankCode'
 };
 
 export async function updateEmployeeService(empId, body) {
@@ -64,7 +64,8 @@ export async function getFilterHelperService(index, body) {
   try {
     const matchCondition = {
       $and: [
-        { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER }
+        { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER },
+        { bankCode: { $nin: ['TIMO', 'TIMO_CLONE'] } }
       ]
     };
     for (const [key, value] of Object.entries(body)) {
@@ -116,40 +117,90 @@ export async function forControlListService(body, skip, limit) {
 
 export async function totalTransactionAmountService(body) {
   try {
-    const { fromDate, toDate = new Date() } = body;
+    const { fromDate, toDate } = body;
     const matchCondition = {
-      $and: [
-        { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER },
-        { time: { $lte: new Date(toDate) } }
-      ]
+      transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
+      time: { $lte: toDate || new Date() },
+      haveBankCode: true
     };
-    if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: new Date(fromDate) } });
+    if (isValidDate(fromDate)) matchCondition.time = { $gte: new Date(fromDate) };
 
     for (const [key, value] of Object.entries(body)) {
       if (Object.keys(FILTER_KEY).includes(key) && Array.isArray(value) && value.length) {
-        matchCondition.$and.push({ [FILTER_KEY[key]]: { $in: value } });
+        matchCondition[FILTER_KEY[key]] = { $in: value };
       }
     }
 
-    const payload = await TransactionModel.aggregate([
-      { $match: matchCondition },
+    const aggPipe = [
+      {
+        $addFields: {
+          isSend: {
+            $cond: [
+              { $ifNull: ['$interbankData', false] },
+              true,
+              false
+            ]
+          },
+          haveBankCode: {
+            $cond: [
+              { $ifNull: ['$bankCode', false] },
+              true,
+              false
+            ]
+          }
+        }
+      },
+      { $match: matchCondition }
+    ];
+
+    const half = [
       {
         $group: {
-          _id: '$bank',
+          _id: '$bankCode',
           totalAmount: { $sum: '$amount' },
           totalFee: { $sum: '$fee' }
         }
+      },
+      {
+        $group: {
+          _id: null,
+          arrayBank: {
+            $addToSet: {
+              bank: '$_id',
+              amount: '$totalAmount',
+              fee: '$totalFee'
+            }
+          },
+          totalAmount: { $sum: '$totalAmount' },
+          totalFee: { $sum: '$totalFee' }
+        }
       }
+    ];
+
+    let sendAgg = aggPipe;
+    let receiveAgg = aggPipe;
+
+    sendAgg = sendAgg.concat([{ $match: { isSend: true } }, ...half]);
+    receiveAgg = receiveAgg.concat([{ $match: { isSend: false } }, ...half]);
+
+    const [sendData, receiveData] = await Promise.all([
+      TransactionModel.aggregate(sendAgg),
+      TransactionModel.aggregate(receiveAgg)
     ]);
 
-    let totalAmount = 0;
-    let totalFee = 0;
-    payload.forEach((element) => {
-      totalAmount += element?.totalAmount ? element.totalAmount : 0;
-      totalFee += element?.totalFee ? element.totalFee : 0;
-    });
+    const sendPayload = {
+      arrayBank: sendData[0]?.arrayBank,
+      totalAmount: sendData[0]?.totalAmount,
+      totalFee: sendData[0]?.totalFee
+    };
 
-    return { totalAmount, totalFee, payload };
+    const receivePayload = {
+      arrayBank: receiveData[0]?.arrayBank,
+      totalAmount: receiveData[0]?.totalAmount,
+      totalFee: receiveData[0]?.totalFee
+    };
+
+    return { sendPayload, receivePayload };
   } catch (error) {
     return errorMessage(500, error);
   }
