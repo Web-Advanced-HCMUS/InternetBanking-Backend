@@ -7,7 +7,7 @@ import TransactionModel from '../model/Transaction.model.js';
 
 import { USER_MODEL_TYPE, TRANSACTION_TYPE } from '../../utils/constant.js';
 
-import { isValidDate } from '../../helper/date.js';
+import { isValidDate, getFirstTimeOfDay, getLastTimeOfDay } from '../../helper/date.js';
 
 const FILTER_KEY = {
   bank: 'bankCode'
@@ -89,13 +89,22 @@ export async function getFilterHelperService(index, body) {
 
 export async function forControlListService(body, skip, limit) {
   try {
-    const { fromDate, toDate = new Date() } = body;
+    const { fromDate, toDate } = body;
     const matchCondition = {
-      transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
-      time: { $lte: new Date(toDate) },
-      bankCode: { $exists: true }
+      $and: [
+        { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER },
+        { bankCode: { $exists: true } }
+      ]
     };
-    if (isValidDate(fromDate)) matchCondition.time = { $gte: new Date(fromDate) };
+
+    if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: getFirstTimeOfDay(fromDate) } });
+    else return errorMessage(406, 'INVALID FROM DATE!');
+
+    if (!toDate) {
+      const defaultToDate = new Date();
+      matchCondition.$and.push({ time: { $lte: getLastTimeOfDay(defaultToDate) } });
+    } else if (isValidDate(toDate)) matchCondition.$and.push({ time: { $lte: getLastTimeOfDay(toDate) } });
+    else return errorMessage(406, 'INVALID TO DATE!');
 
     // for (const [key, value] of Object.entries(body)) {
     //   if (Object.keys(FILTER_KEY).includes(key) && Array.isArray(value) && value.length) {
@@ -119,11 +128,20 @@ export async function totalTransactionAmountService(body) {
   try {
     const { fromDate, toDate } = body;
     const matchCondition = {
-      transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER,
-      time: { $lte: toDate || new Date() },
-      haveBankCode: true
+      $and: [
+        { transactionType: TRANSACTION_TYPE.INTERBANK_TRANSFER },
+        { bankCode: { $exists: true } }
+      ]
     };
-    if (isValidDate(fromDate)) matchCondition.time = { $gte: new Date(fromDate) };
+
+    if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: getFirstTimeOfDay(fromDate) } });
+    else return errorMessage(406, 'INVALID FROM DATE!');
+
+    if (!toDate) {
+      const defaultToDate = new Date();
+      matchCondition.$and.push({ time: { $lte: getLastTimeOfDay(defaultToDate) } });
+    } else if (isValidDate(toDate)) matchCondition.$and.push({ time: { $lte: getLastTimeOfDay(toDate) } });
+    else return errorMessage(406, 'INVALID TO DATE!');
 
     for (const [key, value] of Object.entries(body)) {
       if (Object.keys(FILTER_KEY).includes(key) && Array.isArray(value) && value.length) {

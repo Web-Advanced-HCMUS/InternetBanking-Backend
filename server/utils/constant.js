@@ -79,3 +79,5 @@ export const LIST_TRANSACTION_TYPE = {
 };
 
 export const HASH_DIGIT = 10;
+
+export const TIME_OFFSET = 7;

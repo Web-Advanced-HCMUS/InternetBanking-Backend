@@ -121,7 +121,7 @@ export async function transactionHistoryService(type, order, body/* , skip, limi
     //   fromDate, toDate = new Date(), accountNumber
     // } = body;
 
-    //let count = 0;
+    // let count = 0;
     let payload = [];
 
     // const matchCond = { $and: [{ [KEY_TIME[type]]: { $lte: toDate } }, { [KEY_ACCOUNT[type]]: accountNumber }] };
@@ -151,17 +151,17 @@ export async function transactionHistoryService(type, order, body/* , skip, limi
     //     return errorMessage(404, 'INVALID TYPE');
     // }
 
-    //return [count, payload];
+    // return [count, payload];
 
     switch (type) {
       case LIST_TRANSACTION_TYPE.SEND:
       case LIST_TRANSACTION_TYPE.RECEIVE: {
-        payload = await TransactionModel.find({}).sort({time: SORT_ORDER[order]}).lean();
+        payload = await TransactionModel.find({}).sort({ time: SORT_ORDER[order] }).lean();
 
         break;
       }
       case LIST_TRANSACTION_TYPE.DEBT: {
-        payload = await DebtModel.find({status: 'complete'}).sort({endDate: SORT_ORDER[order]}).lean();
+        payload = await DebtModel.find({ status: 'complete' }).sort({ endDate: SORT_ORDER[order] }).lean();
         break;
       }
       default:
@@ -169,7 +169,6 @@ export async function transactionHistoryService(type, order, body/* , skip, limi
     }
     return payload;
   } catch (error) {
-    console.log(error);
     return errorMessage(500, error);
   }
 }

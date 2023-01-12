@@ -323,8 +323,8 @@
  *           toDate:
  *             type: String
  *         example: {
- *           "fromDate": "ISODate String",
- *           "toDate": "ISODate String"
+ *           "fromDate": "YYYY-MM-DD Date String",
+ *           "toDate": "YYYY-MM-DD Date String"
  *         }
  *     responses:
  *       200:
@@ -377,8 +377,8 @@
  *           bank:
  *             type: Array
  *         example: {
- *           "fromDate": "ISODate String",
- *           "toDate": "ISODate String",
+ *           "fromDate": "YYYY-MM-DD Date String",
+ *           "toDate": "YYYY-MM-DD Date String",
  *           "bank": []
  *         }
  *     responses:
