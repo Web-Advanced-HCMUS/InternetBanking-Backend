@@ -23,7 +23,7 @@ router.use('/api/beneficiary', authorized(), BeneficiaryRouter);
 
 router.use('/api/transaction', authorized(), TransactionRouter);
 
-router.use('/api/interbank', authorized(), InterbankRouter);
+router.use('/api/interbank', InterbankRouter);
 
 router.use('/api/account', authorized(), AccountRouter);
 
