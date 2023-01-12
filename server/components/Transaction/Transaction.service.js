@@ -112,10 +112,12 @@ export async function verifyInternalTransaction(data) {
     const [err2, fromAccount] = await HandleRequest(AccountService.getAccount(fromAccountNumber));
     if (err2) throw new APIError(err2.statusCode, err2.message);
     if (!fromAccount) throw new APIError(400, 'Account operates transaction is not exist in system');
+    if (fromAccount.isClosed === true) throw new APIError(400, 'Account operates transaction is closed in system');
 
     const [err3, toAccount] = await HandleRequest(AccountService.getAccount(toAccountNumber));
     if (err3) throw new APIError(err3.statusCode, err3.message);
     if (!toAccount) throw new APIError(400, 'Beneficiary account is not exist in system');
+    if (toAccount.isClosed === true) throw new APIError(400, 'Beneficiary account is closed in system');
 
     const senderFee = feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? fee : 0;
     const [err4, isValidBalance] = await HandleRequest(AccountService.checkBalanceAfterSpend(fromAccountNumber, amount, senderFee));

@@ -81,6 +81,7 @@ export async function verifyDebtPaymentRequest(debtId, data) {
         const [err1, debtorAccount] = await HandleRequest(AccountModel.findOne({ userId, accountNumber: fromAccountNumber }));
         if (err1) throw new APIError(err1.statusCode, err1.message);
         if (!debtorAccount) throw new APIError(400, 'User or account is not exist in system');
+        if (debtorAccount.isClosed === true) throw new APIError(400, 'Account is closed in system');
 
         const [err2, modifiedCount] = await HandleRequest(OTPService.verifyOTP(userId, otp));
         if (err2) throw new APIError(err2.statusCode, err2.message);
@@ -96,6 +97,8 @@ export async function verifyDebtPaymentRequest(debtId, data) {
 
         const [err4, creditorAccount] = await HandleRequest(AccountModel.findOne({ accountNumber: debt.creditorAccountNumber }));
         if (err4) throw new APIError(err4.statusCode, err4.message);
+        if (!debtorAccount) throw new APIError(400, 'Creditor account is not exist in system');
+        if (creditorAccount.isClosed === true) throw new APIError(400, 'Creditor account is closed in system');
 
         return {
             ...data,
@@ -168,9 +171,16 @@ export async function verifyCancelDebtRequest(debtId, data) {
         if (err1) throw new APIError(err1.statusCode, err1.message);
         if (!debt) throw new APIError(400, 'Debt is not exist in system');
 
-        const [err2, targetUser] = await HandleRequest(AccountService.getAccount(fromAccountNumber));
+        const [err2, originalAccount] = await HandleRequest(AccountService.getAccount(fromAccountNumber));
         if (err2) throw new APIError(err2.statusCode, err2.message);
-        if (!targetUser) throw new APIError(400, 'Account operates cancel action is not exist in system');
+        if (!originalAccount) throw new APIError(400, 'Account operates cancel action is not exist in system');
+        if (originalAccount.isClosed === true) throw new APIError(400, 'Account is closed in system');
+
+        const targetAccountNumber = fromAccountNumber === debt.creditorAccountNumber ? debt.debtorAccountNumber : debt.creditorAccountNumber;
+        const [err3, targetAccount] = await HandleRequest(AccountService.getAccount(targetAccountNumber));
+        if (err3) throw new APIError(err3.statusCode, err3.message);
+        if (!targetAccount) throw new APIError(400, 'Target account is not exist in system');
+        if (targetAccount.isClosed === true) throw new APIError(400, 'Target account is closed in system');
 
         return { ...data, debt: debt._doc };
     } catch (error) {
@@ -217,10 +227,12 @@ export async function verifyCreateDebtRequest(data) {
     const [err1, creditorAccount] = await HandleRequest(AccountService.getAccount(creditorAccountNumber));
     if (err1) throw new APIError(err1.statusCode, err1.message);
     if (!creditorAccount) throw new APIError(400, "User' account creates debt is not exist in system");
+    if (creditorAccount.isClosed === true) throw new APIError(400, 'Account is closed in system');
 
     const [err2, debtorAccount] = await HandleRequest(AccountService.getAccount(debtorAccountNumber));
     if (err2) throw new APIError(err2.statusCode, err2.message);
     if (!debtorAccount) throw new APIError(400, 'Debtor account is not exist in system');
+    if (debtorAccount.isClosed === true) throw new APIError(400, 'Debtor account is closed in system');
 
     if (startDate > endDate) throw new APIError(400, 'Start date greater than end date');
 

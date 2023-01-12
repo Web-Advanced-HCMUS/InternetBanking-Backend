@@ -233,6 +233,7 @@ export async function verifyInterbankTransfer(req) {
     const [err2, fromAccount] = await HandleRequest(AccountService.getAccount(fromAccountNumber));
     if (err2) throw new APIError(err2.statusCode, err2.message);
     if (!fromAccount) throw new APIError(400, 'Account operates transaction is not exist in system');
+    if (fromAccount.isClosed === true) throw new APIError(400, 'Account operates transaction is closed in system');
 
     const validBank = await InterbankModel.findOne({
       code: req.body.bankCode
@@ -243,6 +244,7 @@ export async function verifyInterbankTransfer(req) {
     if (err3) throw new APIError(err3.statusCode, err3.message);
     if (toAccount.status === 'fail') throw new APIError(400, 'Beneficiary account is not exist in destination bank');
     if (toAccount.name !== req.body.toAccountOwnerName) throw new APIError(400, 'Beneficiary account owner name is not exist in destination bank');
+    if (toAccount.isClosed === true) throw new APIError(400, 'Beneficiary account is closed in system');
 
     const senderFee = feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? fee : 0;
     const [err4, isValidBalance] = await HandleRequest(AccountService.checkBalanceAfterSpend(fromAccountNumber, amount, senderFee));
@@ -274,6 +276,7 @@ export async function verifyInterbankDeposit(req) {
       accountNumber: req.body.data.toAccountNumber
     });
     if (!validAccount) throw new APIError(400, 'Beneficiary does not exist in system');
+    if (validAccount.isClosed === true) throw new APIError(400, 'Beneficiary account is closed in system');
 
     return req.body;
   } catch (error) {
