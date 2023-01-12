@@ -149,7 +149,7 @@ export function isAdmin() {
       }
 
       const user = await UserLoginModel.findOne({ username: userData?.username }).populate('userId').lean();
-      console.log(user);
+      // console.log(user);
       const authUser = {
         _id: userData?._id,
         username: user?.username,
