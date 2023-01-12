@@ -3,6 +3,7 @@ import { ACCOUNT_TYPE } from '../../utils/constant.js';
 
 const AccountSchema = new mongoose.Schema({
   userId: { type: mongoose.Types.ObjectId, ref: 'UserInfo', require: true },
+  isCLosed: { type: Boolean, default: false },
   openingDate: { type: Date, default: new Date() },
   currentBalance: { type: Number, default: 0 },
   accountOwnerName: { type: String, require: true },

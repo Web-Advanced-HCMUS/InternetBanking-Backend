@@ -136,3 +136,15 @@ export async function getUserByAccountNumberController(req, res) {
     return res.RH.error(error);
   }
 }
+
+export async function closeAccountByAccountNumberController(req, res) {
+  try {
+    const { auth } = req;
+    const { accountNumber } = req.params;
+    const result = await UserInfoService.closeAccountByAccountNumberService(auth, accountNumber);
+
+    return res.RH.success(result);
+  } catch (error) {
+    return res.RH.error(error);
+  }
+}

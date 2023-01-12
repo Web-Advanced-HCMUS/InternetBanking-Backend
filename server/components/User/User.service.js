@@ -2,6 +2,7 @@ import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
+import { Types } from 'mongoose';
 import { errorMessage } from '../../utils/error.js';
 
 import UserInfoModel from '../model/UserInfo.model.js';
@@ -13,7 +14,7 @@ import EmployeeModel from '../model/Employee.model.js';
 import { nodeMailerSendEmail } from '../../helper/mailer.js';
 
 import {
-  USER_ROLE, USER_GENDER, USER_MODEL_TYPE, HASH_DIGIT
+  USER_ROLE, USER_GENDER, USER_MODEL_TYPE, HASH_DIGIT, ACCOUNT_TYPE
 } from '../../utils/constant.js';
 
 import { recoverPasswordMail } from '../../utils/mailTemplate/recoveryPassword.mailTemplate.js';
@@ -30,7 +31,7 @@ export const autoGenEmpId = () => `${Math.floor(100000 + Math.random() * 900000)
 export const refreshTokenService = async (userId, refreshToken) => {
   try {
     if (!refreshToken) return errorMessage(401, 'UNAUTHORIZED!');
-    const matchToken = await UserLoginModel.findOne({ userId, refreshToken }).lean();
+    const matchToken = await UserLoginModel.findOne({ userId: new Types.ObjectId(userId), refreshToken }).lean();
     if (!matchToken) return errorMessage(403, 'FORBIDDEN!');
 
     const user = jwt.verify(refreshToken, REFRESH_KEY);
@@ -119,7 +120,7 @@ export async function createUserService(auth, body) {
         userId,
         accountOwnerName: body?.fullName,
         accountNumber,
-        accountType,
+        accountType: ACCOUNT_TYPE[accountType],
         createBy: _id
       };
 
@@ -244,7 +245,7 @@ export async function getUserInfoService(auth) {
       if (Array.isArray(accounts) && accounts.length) {
         userData.accounts = accounts.map((e) => ({
           accountNumber: e?.accountNumber,
-          currentBalance: e?.currentBalance
+          isClosed: e?.isCLosed
         }));
       } else userData.accounts = [];
     } else userData = await EmployeeModel.findById(_id).lean();
@@ -347,6 +348,22 @@ export async function getUserByAccountNumberService(accountNumber) {
     if (!hasUser) return errorMessage(404, 'NOT FOUND!');
 
     return hasUser;
+  } catch (error) {
+    return errorMessage(500, error);
+  }
+}
+
+export async function closeAccountByAccountNumberService(auth, accountNumber) {
+  try {
+    const { _id, role } = auth;
+    const findUserAccount = await AccountModel.findOne({ accountNumber }).lean();
+
+    if (role !== USER_ROLE.ADMIN && role !== USER_ROLE.EMPLOYEE
+    && _id.toString() !== findUserAccount?.userId.toString()) return errorMessage(403, 'PERMISSION DENIED!');
+
+    await AccountModel.findOneAndUpdate({ accountNumber }, { isCLosed: true });
+
+    return true;
   } catch (error) {
     return errorMessage(500, error);
   }

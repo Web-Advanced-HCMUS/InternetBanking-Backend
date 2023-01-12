@@ -65,4 +65,10 @@ router.route('/get-user-by-account-number/:accountNumber')
     UserInfoController.getUserByAccountNumberController
   );
 
+router.route('/close-account/:accountNumber')
+  .post(
+    authorized(),
+    UserInfoController.closeAccountByAccountNumberController
+  );
+
 export default router;
