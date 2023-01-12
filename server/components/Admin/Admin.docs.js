@@ -282,7 +282,8 @@
  *           properties:
  *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
+ *              success: true,
+ *              payload: "Array tên các ngân hàng đã liên kết có giao dịch"
  *           }
  *       404:
  *         description: When data cannot be process
@@ -391,7 +392,19 @@
  *           properties:
  *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
+ *              success: true,
+ *              payload: {
+ *                "sendPayload": {
+ *                    "arrayBank": "Array các ngân hàng và tổng tiền gửi theo từng ngân hàng",
+ *                    "totalAmount": "Tổng tiền gửi",
+ *                    "totalFee": "Tổng phí chuyển tiền"
+ *                },
+ *                "receivePayload": {
+ *                    "arrayBank": "Array các ngân hàng và tổng tiền nhận theo từng ngân hàng",
+ *                    "totalAmount": "Tổng tiền gửi",
+ *                    "totalFee": "Tổng phí chuyển tiền"
+ *                }
+ *              }
  *           }
  *       404:
  *         description: When data cannot be process
