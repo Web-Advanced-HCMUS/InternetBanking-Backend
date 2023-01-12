@@ -41,7 +41,7 @@
  *           "email": "duahde@gmail.com",
  *           "identityCard": "3874295817",
  *           "address": "221B, Baker street",
- *           "accountType": "USER/EMPLOYEE"
+ *           "accountType": "PAYMENT/SAVING"
  *         }
  *     responses:
  *       200:

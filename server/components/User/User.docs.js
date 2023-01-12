@@ -488,3 +488,50 @@
  *           type: string
  *           example: "Internal server error"
  */
+
+/**
+ * @swagger
+ * /user/close-account/{accountNumber}:
+ *   post:
+ *     summary: Khóa tài khoảng thanh toán, dùng cho cả User và Employee
+ *     tags:
+ *       - User Info
+ *     parameters:
+ *       - name: accountNumber
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: Số Tài Khoảng
+ *     responses:
+ *       200:
+ *         name: body
+ *         in: body
+ *         required: true
+ *         description: data report
+ *         schema:
+ *           type: object
+ *           properties:
+ *             $ref: '#/definitions/dashboard'
+ *           example: {
+ *              success: true
+ *           }
+ *       404:
+ *         description: When data cannot be process
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               $ref: '#/definitions/ValidatorErrorItem'
+ *           example: {
+ *             success: false,
+ *             errors: {
+ *                 "param": "EXISTS",
+ *               }
+ *           }
+ *       500:
+ *         description: When got server exception
+ *         schema:
+ *           type: string
+ *           example: "Internal server error"
+ */
