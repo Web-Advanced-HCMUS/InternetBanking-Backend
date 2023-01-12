@@ -1,15 +1,23 @@
 import { errorMessage } from '../../utils/error.js';
 import AccountModel from '../model/Account.model.js';
 import APIError from '../../utils/APIError.js';
+import { ACCOUNT_TYPE } from '../../utils/constant.js';
 
 export async function getAccountFromUserId(userId) {
   try {
-    return await AccountModel.findOne({ userId });
+    return await AccountModel.findOne({ userId, accountType: ACCOUNT_TYPE.PAYMENT });
   } catch (error) {
     throw new APIError(500, error.message);
   }
 }
 
+export async function getAccountListFromUserId(userId) {
+  try {
+    return await AccountModel.find({ userId });
+  } catch (error) {
+    throw new APIError(500, error.message);
+  }
+}
 
 export async function getAccount(accountNumber) {
   try {
