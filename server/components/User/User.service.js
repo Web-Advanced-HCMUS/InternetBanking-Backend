@@ -2,6 +2,7 @@ import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
+import { Types } from 'mongoose';
 import { errorMessage } from '../../utils/error.js';
 
 import UserInfoModel from '../model/UserInfo.model.js';
@@ -18,7 +19,6 @@ import {
 
 import { recoverPasswordMail } from '../../utils/mailTemplate/recoveryPassword.mailTemplate.js';
 import { createAccountOTPMail } from '../../utils/mailTemplate/createAccount.mailTemplate.js';
-import { Types } from 'mongoose';
 
 const { ACCESS_KEY, REFRESH_KEY } = process.env;
 
@@ -243,16 +243,10 @@ export async function getUserInfoService(auth) {
       const accounts = await AccountModel.find({ userId: _id }).lean();
 
       if (Array.isArray(accounts) && accounts.length) {
-        // userData.accounts = accounts.map((e) => ({
-        //   accountNumber: e?.accountNumber,
-        //   currentBalance: e?.currentBalance
-        // }));
-        userData.accounts = Object.values(accounts)
-          .filter((value) => !value?.isCLosed)
-          .reduce((obj, key) => {
-            obj[key] = accounts[key];
-            return obj;
-        }, {});
+        userData.accounts = accounts.map((e) => ({
+          accountNumber: e?.accountNumber,
+          isClosed: e?.isCLosed
+        }));
       } else userData.accounts = [];
     } else userData = await EmployeeModel.findById(_id).lean();
 

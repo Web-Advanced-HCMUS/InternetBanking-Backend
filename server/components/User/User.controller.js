@@ -5,7 +5,6 @@ import { pagingQuery } from '../../utils/pagingQueryHadle.js';
 export async function refreshTokenController(req, res) {
   try {
     const { refreshToken, userId } = req.query;
-    console.log({ refreshToken, userId });
     const payload = await UserInfoService.refreshTokenService(userId, refreshToken);
 
     return res.RH.success(payload);
