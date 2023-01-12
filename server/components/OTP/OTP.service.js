@@ -41,11 +41,11 @@ export async function sendTransactionOTP(userId, amount) {
         if (err) throw new APIError(err.statusCode, err.message);
 
         await nodeMailerSendEmail(
+            user.fullName,
             user.email,
-            'Internet Banking OTP',
             null,
-            transactionOTPMail(otp, amount),
-            null
+            'Transaction OTP',
+            transactionOTPMail(otp, amount)
         );
 
         return { message: `OTP sent successfully ${otp}` };
