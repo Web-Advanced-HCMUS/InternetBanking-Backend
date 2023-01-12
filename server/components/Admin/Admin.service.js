@@ -158,7 +158,8 @@ export async function totalTransactionAmountService(body) {
         $group: {
           _id: '$bankCode',
           totalAmount: { $sum: '$amount' },
-          totalFee: { $sum: '$fee' }
+          totalFee: { $sum: '$fee' },
+          totalAfterFee: { $sum: '$afterFee' }
         }
       },
       {
@@ -168,11 +169,13 @@ export async function totalTransactionAmountService(body) {
             $addToSet: {
               bank: '$_id',
               amount: '$totalAmount',
-              fee: '$totalFee'
+              fee: '$totalFee',
+              amountWithFee: '$totalAfterFee'
             }
           },
           totalAmount: { $sum: '$totalAmount' },
-          totalFee: { $sum: '$totalFee' }
+          totalFee: { $sum: '$totalFee' },
+          totalAfterFee: { $sum: '$totalAfterFee' }
         }
       }
     ];
@@ -180,8 +183,36 @@ export async function totalTransactionAmountService(body) {
     let sendAgg = aggPipe;
     let receiveAgg = aggPipe;
 
-    sendAgg = sendAgg.concat([{ $match: { isSend: true } }, ...half]);
-    receiveAgg = receiveAgg.concat([{ $match: { isSend: false } }, ...half]);
+    sendAgg = sendAgg.concat([
+      { $match: { isSend: true } },
+      {
+        $addFields: {
+          afterFee: {
+            $cond: [
+              { $eq: ['$feePaymentMethod', 'paid sender'] },
+              { $sum: ['$amount', '$fee'] },
+              '$amount'
+            ]
+          }
+        }
+      },
+       ...half
+    ]);
+    receiveAgg = receiveAgg.concat([
+      { $match: { isSend: false } },
+      {
+        $addFields: {
+          afterFee: {
+            $cond: [
+              { $eq: ['$feePaymentMethod', 'paid receiver'] },
+              { $sum: ['$amount', '$fee'] },
+              '$amount'
+            ]
+          }
+        }
+      },
+      ...half
+    ]);
 
     const [sendData, receiveData] = await Promise.all([
       TransactionModel.aggregate(sendAgg),
