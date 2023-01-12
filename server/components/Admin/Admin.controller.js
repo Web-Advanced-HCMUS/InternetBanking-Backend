@@ -62,11 +62,10 @@ export async function getFilterHelperController(req, res) {
 
 export async function forControlListController(req, res) {
   try {
-    const { page, skip, limit } = pagingQuery(req);
     const { body } = req;
-    const payload = await AdminService.forControlListService(body, skip, limit);
+    const payload = await AdminService.forControlListService(body);
 
-    return res.RH.paging(payload, page, limit);
+    return res.RH.success(payload);
   } catch (error) {
     return res.RH.error(error);
   }

@@ -313,14 +313,6 @@
  *     tags:
  *       - Admin
  *     parameters:
- *       - name: page
- *         in: query
- *         type: number
- *         description: Số trang
- *       - name: limit
- *         in: query
- *         type: number
- *         description: Số lượng item trong 1 trang
  *       - name: body
  *         in: body
  *         required: true
@@ -329,25 +321,20 @@
  *             type: String
  *           toDate:
  *             type: String
- *           bank:
- *             type: Array
  *         example: {
  *           "fromDate": "ISODate String",
- *           "toDate": "ISODate String",
- *           "bank": []
+ *           "toDate": "ISODate String"
  *         }
  *     responses:
  *       200:
- *         name: body
- *         in: body
- *         required: true
- *         description: data report
+ *         description: data return
  *         schema:
- *           type: object
- *           properties:
- *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
+ *              success: true,
+ *              payload: {
+ *                 "sendPayload": "List các Transaction gửi tiền liên ngân hàng",
+ *                 "receivePayload": "List các Transaction nhận tiền liên ngân hàng"
+ *                }
  *           }
  *       404:
  *         description: When data cannot be process
