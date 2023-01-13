@@ -245,7 +245,8 @@ export async function getUserInfoService(auth) {
       if (Array.isArray(accounts) && accounts.length) {
         userData.accounts = accounts.map((e) => ({
           accountNumber: e?.accountNumber,
-          isClosed: e?.isCLosed
+          isClosed: e?.isCLosed,
+          currentBalance: e?.currentBalance
         }));
       } else userData.accounts = [];
     } else userData = await EmployeeModel.findById(_id).lean();
