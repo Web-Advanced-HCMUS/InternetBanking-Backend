@@ -300,14 +300,14 @@ export async function sendMailForgotPasswordService(username) {
 
 export async function forgotPasswordService(username, otp, newPass) {
   try {
-    const hasOTP = await UserOTPModel.findOne({ otp })
-      .populate('userId')
-      .lean();
+    const hasOTP = await UserOTPModel.findOne({ otp }).lean();
 
     if (!hasOTP) return errorMessage(405, 'Wrong OTP');
 
     const findLogin = await UserLoginModel.findOne({ username });
-    if (hasOTP?.userId?._id.toString() !== findLogin?.userId.toString()) return errorMessage(405, 'OTP not match!');
+    console.log({ hasOTP, findLogin });
+    console.log(hasOTP?.userId?.toString(), findLogin?.userId.toString());
+    if (hasOTP?.userId?.toString() !== findLogin?.userId.toString()) return errorMessage(405, 'OTP not match!');
 
     const currentTime = moment();
     if (hasOTP?.expiredTime < currentTime) return errorMessage(405, 'OTP Expired!');
