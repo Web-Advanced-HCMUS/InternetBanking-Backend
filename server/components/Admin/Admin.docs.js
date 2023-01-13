@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *   - name: Admin
+ *     description: API about Admin's function
+ */
+
+/**
+ * @swagger
  * /admin/create-emp-account:
  *   post:
  *     summary: Tạo Tài khoản nhân viên

@@ -1,5 +1,53 @@
 /**
  * @swagger
+ * tags:
+ *   - name: Employee
+ *     description: API about Employee's function(Admin can use these)
+ */
+
+/**
+ * @swagger
+ * definitions:
+ *   Employee:
+ *     type: object
+ *     properties:
+ *       role:
+ *         type: string
+ *         description: Value to check Employee Role (Admin or Employee)
+ *       empId:
+ *         type: string
+ *         description: Auto generated Employee Id
+ *       fullName:
+ *         type: string
+ *         description: Full name of user
+ *       gender:
+ *         type: string
+ *         description: Gender of user
+ *       phone:
+ *         type: string
+ *         description: User's phone number
+ *       identityCard:
+ *         type: string
+ *         description: The location of value
+ *       dateOfBirth:
+ *         type: string
+ *         description: User's Date of Birth
+ *       email:
+ *         type: string
+ *         description: User's email
+ *       address:
+ *         type: string
+ *         description: User's living address
+ *       createDate:
+ *         type: date
+ *         description: Infomation created Date
+ *       lastUpdate:
+ *         type: date
+ *         description: User infomation last update time
+ */
+
+/**
+ * @swagger
  * /emp/create:
  *   post:
  *     summary: Tạo Tài khoản, sau khi gửi thông tin đi sẽ nhận được Email OTP (Step 1)

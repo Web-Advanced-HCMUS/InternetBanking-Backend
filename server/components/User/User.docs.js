@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   - name: User
- *     description: API about User management (include Employee)
+ *     description: API about User management (All Employee role can use these)
  */
 
 /**
