@@ -98,7 +98,7 @@ export async function forControlListService(body, skip, limit) {
     };
 
     if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: getFirstTimeOfDay(fromDate) } });
-    else return errorMessage(406, 'INVALID FROM DATE!');
+    // else return errorMessage(406, 'INVALID FROM DATE!');
 
     if (!toDate) {
       const defaultToDate = new Date();
@@ -135,7 +135,7 @@ export async function totalTransactionAmountService(body) {
     };
 
     if (isValidDate(fromDate)) matchCondition.$and.push({ time: { $gte: getFirstTimeOfDay(fromDate) } });
-    else return errorMessage(406, 'INVALID FROM DATE!');
+    // else return errorMessage(406, 'INVALID FROM DATE!');
 
     if (!toDate) {
       const defaultToDate = new Date();

@@ -1,7 +1,12 @@
 version: '3'
 services:
   internet-banking-server:
-    image: huynhducle20000/project-internet-banking
+    image: docker.io/huynhducle20000/project-internet-banking
     ports:
-      - 8000:3000
+      - 3000:3000
+    restart: unless-stopped
+  internet-banking-ui:
+    image: docker.io/huynhducle20000/internet-banking-front-end
+    ports:
+      - 5000:5000
     restart: unless-stopped

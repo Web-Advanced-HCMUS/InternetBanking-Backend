@@ -1,0 +1,965 @@
+commit cda5c4f6e347da18dd92099a99959eeeee284e3c
+Merge: 8337418 6f760e7
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Fri Jan 13 13:53:18 2023 +0700
+
+    Merge branch 'develop'
+
+commit 6f760e7c534c16e58dd106aa60a1fa062323a8e1
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Fri Jan 13 13:53:05 2023 +0700
+
+    Update Employee Model def
+
+commit 30d5c0691c1544b40ba38e8f386ce9faee7d0448
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Fri Jan 13 13:47:03 2023 +0700
+
+    update Employee and Admin docs
+
+commit 8337418113cc971310eb3f25253cbed0979d685d
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Jan 13 12:41:08 2023 +0700
+
+    Update model
+
+commit 487c413d88ad782d0c6d447ec70d0b687b7c2c22
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Fri Jan 13 12:16:15 2023 +0700
+
+    deprecate API verify account
+
+commit 013e30c7b01566867aa688e46421a056e271af85
+Author: Nghia-Hieu <63239928+Nghia-Hieu@users.noreply.github.com>
+Date:   Fri Jan 13 08:20:12 2023 +0700
+
+    update get user infor
+
+commit 1ffec44248192a381bdda586d717439ebbca7a8e
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Jan 13 02:27:56 2023 +0700
+
+    Update secure route
+
+commit bf10fed1e793cd451ad540a75f0968cd5385f3bd
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Jan 13 01:38:45 2023 +0700
+
+    Update authorization for some api
+
+commit 499d2c32425c50a4c88cc1d06472f15c91ce4ea8
+Merge: 06cbf1d b6bc07e
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Fri Jan 13 00:31:06 2023 +0700
+
+    Merge branch 'main' into develop
+
+commit 06cbf1de72c7942251c97e3e79a32e2c1315ff8d
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Fri Jan 13 00:30:31 2023 +0700
+
+    update fromDate, toDate filter
+
+commit b6bc07eab3feafafff5746daf2a81169eabdd24a
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 23:59:01 2023 +0700
+
+    Update Account.model.js
+
+commit 95ef06a111193a6973e7592137f6af296fecee2b
+Merge: ac1614a 7a2da3b
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 23:36:31 2023 +0700
+
+    Merge branch 'develop'
+
+commit 7a2da3b024f5f4b05140c2d9ae18200c2e9fd1aa
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 23:36:06 2023 +0700
+
+    Update Admin.service.js
+
+commit ac1614a934f64cdc5c6d366ac7dec7cc33532535
+Merge: 3ee6eda f4dd820
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 23:03:26 2023 +0700
+
+    Merge branch 'develop'
+
+commit f4dd8200d25b1d726f091e892a2ffa005d952e16
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 23:01:43 2023 +0700
+
+    fix get user info by token
+
+commit 2c10caddbec3fdb9c80260480f68a88b437bf09e
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 22:48:05 2023 +0700
+
+    create API close Account
+
+commit 3ee6eda563d03841977b1fd988709c213151c2b2
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Thu Jan 12 22:02:47 2023 +0700
+
+    Update server.js
+
+commit 1832031c46611c2136ed5c660b404a1d9b234c29
+Merge: 83294a3 c03eb22
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 16:49:14 2023 +0700
+
+    Merge branch 'develop'
+
+commit c03eb22a1f579df8ead00a36103191cd1df06a29
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 16:48:44 2023 +0700
+
+    Update Admin.docs.js
+
+commit 83294a317939ce8ce6761525c65e2c5e74a65d2f
+Merge: 820eea4 5eed086
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 16:35:25 2023 +0700
+
+    Merge branch 'develop'
+
+commit 5eed0866ca1ebfa0e55b21afb46aa5e21654c3cf
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 16:35:05 2023 +0700
+
+    update APIs
+    
+    - get List InterBank have Transaction
+    - get TotalAmout for-control
+
+commit 820eea4b1b3dcb9d9ae6da807103fd0688271dfd
+Merge: cb042d6 a6d72a2
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 14:31:41 2023 +0700
+
+    Merge branch 'develop'
+
+commit a6d72a297f47c584727ddff25738176f6c7c1e32
+Merge: 6fe8476 c2d1cd7
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 14:31:21 2023 +0700
+
+    Merge branch 'develop' of https://github.com/Web-Advanced-HCMUS/InternetBanking-Backend into develop
+
+commit 6fe847619b22d42feab1161fe2841415c176b40b
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Jan 12 14:26:34 2023 +0700
+
+    update /for-control API
+
+commit cb042d6ba303e2ae3d6dec667aee5e34ac182c03
+Merge: cff5abc c2d1cd7
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Thu Jan 12 12:44:21 2023 +0700
+
+    Merge pull request #15 from Web-Advanced-HCMUS/develop
+    
+    Update send otp email
+
+commit c2d1cd7227262ebff621da9d9643b24de61aa3bf
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Thu Jan 12 12:43:39 2023 +0700
+
+    Update send otp email
+
+commit cff5abc9b9af3f2c044da7cc2b922957d94f8b05
+Merge: 562fba8 855b4da
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Thu Jan 12 09:59:49 2023 +0700
+
+    Merge pull request #14 from Web-Advanced-HCMUS/develop
+    
+    Account
+
+commit 855b4da48262f6558c143fe5ff20f458f7611900
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Thu Jan 12 09:58:55 2023 +0700
+
+    Account
+    
+    Add api get account list and payment account from userId
+
+commit 562fba8094b08271e152dd953b5a05179ef2dfb8
+Merge: 7582085 b6dece1
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Wed Jan 11 17:28:36 2023 +0700
+
+    Merge pull request #13 from Web-Advanced-HCMUS/develop
+    
+    Develop
+
+commit b6dece16f2ef6b67a5fa83e0f0a7361672c0095b
+Merge: 1784dc9 492cc4f
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 11 17:26:51 2023 +0700
+
+    Merge branch 'develop' of https://github.com/Web-Advanced-HCMUS/InternetBanking-Backend into develop
+
+commit 1784dc931282a1a5d95a1de9403884605ca19e18
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 11 17:26:07 2023 +0700
+
+    Account
+    
+    Update api get count from userid
+
+commit 7582085fdbb149cd131bf41ae3444cc467a13f1a
+Merge: 73aaf15 492cc4f
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Wed Jan 11 17:01:11 2023 +0700
+
+    Merge branch 'develop'
+
+commit 492cc4f09ce300448ce29054b580cd80f0fd6467
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Wed Jan 11 17:00:54 2023 +0700
+
+    Update User.service.js
+
+commit 73aaf15203285827fbd76f929d70dabda7573ce2
+Author: Nghia-Hieu <63239928+Nghia-Hieu@users.noreply.github.com>
+Date:   Wed Jan 11 11:28:39 2023 +0700
+
+    refractor TransHistory
+
+commit f37e98eaa04dc50bebe0ec467ad1846eaf0d5e95
+Merge: e2a5d76 4924356
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Wed Jan 11 02:32:48 2023 +0700
+
+    Merge pull request #12 from Web-Advanced-HCMUS/develop
+    
+    Update open comment to send email otp
+
+commit 492435699d95cd3e8960669532073bd253aa2a48
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 11 02:31:36 2023 +0700
+
+    Update open comment to send email otp
+
+commit e2a5d76191a2df6e52394dec8428dab2d5bd5a1f
+Merge: fe71d5a b23e237
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Wed Jan 11 02:20:46 2023 +0700
+
+    Merge pull request #11 from Web-Advanced-HCMUS/develop
+    
+    Develop
+
+commit b23e237a3ea9b2668815f63e4fd9a735154136d9
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 11 02:18:41 2023 +0700
+
+    Interbank
+    
+    Update split function in service
+
+commit 15036973818753602672acd8e48806aa9cef73d3
+Merge: 5d7c021 095fc12
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 11 01:53:37 2023 +0700
+
+    Merge branch 'develop' of https://github.com/Web-Advanced-HCMUS/InternetBanking-Backend into develop
+
+commit 5d7c021df2cd3eb9ab777a0d6f9ca59f82126600
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 11 01:52:52 2023 +0700
+
+    Interbank
+    
+    Update API transfer and get account from linked bank and document v.2.0
+
+commit fe71d5a1233535731772953c9c2420cd4a9c7da0
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Jan 11 00:46:40 2023 +0700
+
+    update mail format
+
+commit 9a58bdfbc0e17d58808c1e0780b00f7239d501cb
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Jan 11 00:35:18 2023 +0700
+
+    Update .gitignore
+
+commit b64488b66d50ff69eb91755ecb5c4e2c688f6cda
+Author: leleeeee <48651329+leleeeee@users.noreply.github.com>
+Date:   Wed Jan 11 00:17:01 2023 +0700
+
+    Update README.md
+
+commit f7076ec495f6d4c3dd6437ad8d171cba32333bb0
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 10 23:51:18 2023 +0700
+
+    Update docs.js
+
+commit f9c50d797affb2f252c4865b0103136c50f26c52
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 10 23:50:45 2023 +0700
+
+    Update docs.js
+
+commit dea5efa69ceb6eef11dbc2641c1db4cf24d09a64
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 10 23:48:22 2023 +0700
+
+    update API docs for linked bank
+
+commit 085701965068bc10a813b54528a43c7da4690c28
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 10 23:36:51 2023 +0700
+
+    create docker compose
+
+commit cadb6fbb847227626d9e3f5691d108267ec7d8af
+Merge: 97d1110 095fc12
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 10 23:30:04 2023 +0700
+
+    Merge branch 'develop'
+
+commit 095fc12be79c4d663ec909248b7d45cd31b170d2
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 10 23:27:24 2023 +0700
+
+    Update User.service.js
+
+commit 7834399f27d8661116aa7c9e0961fd3a975aef5b
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 10 23:23:09 2023 +0700
+
+    update code
+    
+    - fix login respone
+    - remove transaction paging
+
+commit 97d1110a5a2b532cf379035d48d25444e372cb6b
+Merge: 76b48ce ff059f5
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Tue Jan 10 21:32:43 2023 +0700
+
+    Merge pull request #10 from Web-Advanced-HCMUS/develop
+    
+    Update install socket.io
+
+commit ff059f573d8adaf89544808d7c456080b43f7f19
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Tue Jan 10 21:32:07 2023 +0700
+
+    Update install socket.io
+
+commit 76b48ceeab86dbad960f9eae6901f65f07451b47
+Merge: a48cd50 82163d1
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Tue Jan 10 15:38:59 2023 +0700
+
+    Merge pull request #9 from Web-Advanced-HCMUS/develop
+    
+    Develop
+
+commit 82163d1eab6e0af96570870723b5410f6a0ba935
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Tue Jan 10 15:27:49 2023 +0700
+
+    Debt
+    
+    Update real-time notification in Debt v.1.1
+
+commit 2b55adc3b975ccbf4ea3c82476da72c872224259
+Merge: a7b3095 a48cd50
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Tue Jan 10 15:17:37 2023 +0700
+
+    Merge pull request #8 from Web-Advanced-HCMUS/main
+    
+    Merge from main
+
+commit a48cd500ad2a7e6e1d530c21c30713dc4aec6aed
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Mon Jan 9 23:55:26 2023 +0700
+
+    update docker file
+
+commit e7b88d33794a66ce4bc71bda46505d5f065fceb8
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Mon Jan 9 23:40:29 2023 +0700
+
+    update code Admin
+
+commit a7b3095c80b212137abaaf87030325ff94da0e32
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Mon Jan 9 22:21:14 2023 +0700
+
+    fix code
+
+commit bac96b2938262c3d6ef337f6a34225b8fbe12b9e
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Mon Jan 9 22:02:41 2023 +0700
+
+    update code
+
+commit 0ce530fb9db7e09ebbb9d45d6a2eb4ba0d5d316b
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Mon Jan 9 12:33:18 2023 +0700
+
+    Update interbank api
+
+commit 7ee41ec675c7e2c3ee40a6966c7b1d205216cce1
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Mon Jan 9 01:30:43 2023 +0700
+
+    update docs
+
+commit 2603e96b8afb8f612e6a79677ac80d61a05d9163
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Mon Jan 9 01:22:34 2023 +0700
+
+    update login
+
+commit 8f5403ada4795232568222391df9a80583c17136
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Sun Jan 8 16:17:34 2023 +0700
+
+    Update interbank document
+
+commit 986ee8d49b229b90a7554002da738ec26270d5b2
+Merge: 5771aff 03731e7
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Jan 8 01:00:31 2023 +0700
+
+    Merge branch 'develop'
+
+commit 03731e7132bc4f5bf56c002e5b4fc5d644bb798f
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Jan 8 01:00:14 2023 +0700
+
+    update API
+
+commit 248b9058e013cc6e353a310389c3ed644d555f6c
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Jan 8 00:06:27 2023 +0700
+
+    create API logout
+
+commit 0b3308d21e44217265aee02d137ec7c433c8c7f2
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sat Jan 7 23:54:57 2023 +0700
+
+    Fix code User
+
+commit 5771aff76b43565819307f2530f445378f1e872f
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Sat Jan 7 19:23:27 2023 +0700
+
+    Update README.md
+
+commit c4803661a87fc39876bc227a75d2f0a9d849368f
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Sat Jan 7 17:53:32 2023 +0700
+
+    Update auth external doc
+
+commit d474f0a576c4b97d5e706dc05e9bc966792aa8ca
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Sat Jan 7 13:46:43 2023 +0700
+
+    Update host in doc
+
+commit 05f994828053453865ba9dcc367158789c02da61
+Merge: 4e2ca9c 51735ef
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Sat Jan 7 13:15:23 2023 +0700
+
+    Merge pull request #7 from Web-Advanced-HCMUS/develop
+    
+    Update Debt router
+
+commit 51735ef2279016e2380cd4ad7cacf6926a10c72b
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Sat Jan 7 13:14:50 2023 +0700
+
+    Update Debt router
+
+commit 4e2ca9c1bc85ea7a4a9f47e87dd11f8a200684a3
+Merge: f428557 f12511b
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Sat Jan 7 01:34:24 2023 +0700
+
+    Merge pull request #6 from Web-Advanced-HCMUS/develop
+    
+    Develop
+
+commit f12511b7498e7fc40fa8e5e46ad4a17d32f482ee
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Sat Jan 7 01:33:40 2023 +0700
+
+    Fix import in Admin.service.js
+
+commit ebd3576c0c148e3829720d3ab828b2fa42a4bfff
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Sat Jan 7 01:31:00 2023 +0700
+
+    Debt
+    
+    Create Debt Management APIs without real-time and document v.1.0
+
+commit 0c0faf9f676e22757d41cec30fefd6b65485c02f
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 5 22:17:50 2023 +0700
+
+    init Admin route
+
+commit 6f1ce0423b01cdd4063460faf0049b3dd64c1c4c
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 5 21:39:30 2023 +0700
+
+    Update Employee.service.js
+
+commit 415293a784ef70727e3a9beca7a5ace4247cdb64
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 5 21:38:22 2023 +0700
+
+    create Employee docs
+
+commit 67dfb9c315e4e5c5d083f2d346dcc018ed4a134e
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 5 21:20:09 2023 +0700
+
+    add account for user
+
+commit f2d10043f77caa1310fc81ab8fa25b615b1cd3ae
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Jan 5 20:41:18 2023 +0700
+
+    API account recharge
+
+commit f428557acca603bc9574193f37a3d14c613b876f
+Merge: 2de9e16 8e276aa
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Thu Jan 5 18:45:51 2023 +0700
+
+    Merge pull request #5 from Web-Advanced-HCMUS/develop
+    
+    Develop
+
+commit 8e276aa75d863c3148101c15b74495874de6ef6e
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Thu Jan 5 18:44:22 2023 +0700
+
+    Account
+    
+    Update response account information v.2.1
+
+commit 3ea0fc4d14a8524ccf314e7858218df68810f2d1
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Thu Jan 5 18:42:38 2023 +0700
+
+    Interbank
+    
+    Update interbank component v.1.2
+
+commit 2de9e16cf9d164d4f3b3a411899333f3fca78108
+Merge: 08b8775 ab7a900
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Thu Jan 5 16:42:14 2023 +0700
+
+    Merge pull request #4 from Web-Advanced-HCMUS/develop
+    
+    Develop
+
+commit ab7a9002b7a97031ddee7ca4b3fc02f96b3560ac
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Thu Jan 5 16:39:28 2023 +0700
+
+    MODEL
+    
+    Change in Debt and Transaction model
+
+commit 7e37fc4754e0dc0aac5ff68f8f553b6cdc3d8eeb
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Thu Jan 5 16:37:38 2023 +0700
+
+    InternalTransfer
+    
+    Update v1.2
+
+commit 08b87752919c833cc684b27977c1da06cd6b5389
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Jan 4 22:31:45 2023 +0700
+
+    split docs
+
+commit edd77b7f34d9ec42fb1749a80556c16e4663223d
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Jan 4 22:11:48 2023 +0700
+
+    init code
+    
+    - Docker build file
+    - Init Employee route
+
+commit 7cecbc9c834270c4cb63249c6b20f51f59fa9df8
+Merge: 67f9e07 294ecd4
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Wed Jan 4 10:19:32 2023 +0700
+
+    Merge pull request #3 from Web-Advanced-HCMUS/develop
+    
+    Merge change from develop
+
+commit 294ecd47acea6e3b46a3087ebe5dd9774e1ea7bd
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 4 02:37:13 2023 +0700
+
+    Update
+    
+    Update route in endpoint.js
+
+commit ac2e0bcf31d8b44b8757004df0256d17ca0b6254
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 4 02:35:49 2023 +0700
+
+    Utils
+    
+    Update status code
+
+commit d340bb4ad24cb5e702156b76cf5402e89f5a094b
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 4 02:34:52 2023 +0700
+
+    Helper
+    
+    Update signHmac and authorize
+
+commit 7a935644cac5b81ab82ceac484841d8135976a0b
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 4 02:32:11 2023 +0700
+
+    Transaction
+    
+    Add service to save interbank transaction and document
+
+commit 80fd0f9e946004232b92ad4764a06b4ff01fe30f
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 4 02:30:14 2023 +0700
+
+    OTP
+    
+    Add document and modify some place v.1.1
+
+commit 4cb99f1d85e72d224b54e7c5f0683ac3ddb801e8
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 4 02:28:00 2023 +0700
+
+    Interbank
+    
+    Add document and modify someplace v.1.1
+
+commit a6812c3d3e116a1a450eec577160dc9662595f89
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Jan 4 02:26:50 2023 +0700
+
+    Account
+    
+    Create route, controller and document for Account component v.2.0
+
+commit 67f9e07c3060306c765d32cf072041c5dfb2c714
+Merge: b19f3fc 258e2be
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Tue Jan 3 21:16:27 2023 +0700
+
+    Merge branch 'develop'
+
+commit 258e2be0a1adf07f07b6476d04d4a217242df51b
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sat Dec 31 13:24:00 2022 +0700
+
+    modify User folder
+
+commit 54ca0eb5ce7478924107db8e65c4427cc193114f
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:36:47 2022 +0700
+
+    Server
+    
+    Update route for interbank and otp; update use cor with any origin
+
+commit 18466627c482218844f1987c545898d0461b3acc
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:34:26 2022 +0700
+
+    Helper
+    
+    Update verify token from external api call
+
+commit ee2ae5852572a2d559b396e96170afd6b0662279
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:33:00 2022 +0700
+
+    Utils
+    
+    Update handling error and constant
+
+commit 73749a6d40dd487639160539a1578d951b1fd8de
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:31:56 2022 +0700
+
+    MODEL
+    
+    Update some field in models
+
+commit 0cd001000d1ec45778e399ef65aa3f4ba07584ec
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:30:34 2022 +0700
+
+    Interbank
+    
+    Create Interbank API component v.1.0
+
+commit 7d48f2bbeeae3f105101bf57a21de8727b07e772
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:29:13 2022 +0700
+
+    InternalTransfer
+    
+    Update handling error v.1.1
+
+commit 2d1170e2403e2d1841b42882ebe562e3d60dac2c
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:27:53 2022 +0700
+
+    Account
+    
+    Craete Account component v.1.0
+
+commit 75e5f18e2e5d6a20c9645fc3f07cb3f05c706348
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:25:38 2022 +0700
+
+    OTP
+    
+    Create OTP component v.1.0
+
+commit 13fdfd7393ce24946ec024240efde1785d3164b6
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Fri Dec 30 03:23:22 2022 +0700
+
+    Beneficiary
+    
+    Change handling error v.1.3
+
+commit 9fe31938a424efe97215236ee109fccfa4c3e3c3
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Dec 29 07:39:11 2022 +0700
+
+    update code
+
+commit b8afab7ddf5b5f202bd1cf04ad06196e3dc6034c
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Dec 22 00:41:37 2022 +0700
+
+    Update authorize.mdw.js
+
+commit 91e5074d46b095d4c58b6da3e0409e850aebb726
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Dec 22 00:34:19 2022 +0700
+
+    update code
+
+commit f81d45c57781b81131abcf99699e127e11c65634
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Dec 21 21:31:42 2022 +0700
+
+    Update constant.js
+
+commit b03296e5c9e2fe1bd0e314109a95f065d6ce4bd9
+Merge: ff877b0 b1eb7df
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Dec 21 21:27:08 2022 +0700
+
+    Merge branch 'mailer' into develop
+
+commit b19f3fc2b36f15043c675b55e4153eaa3b4da81c
+Merge: 26239b3 ff877b0
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Dec 21 21:17:49 2022 +0700
+
+    Merge branch 'develop'
+
+commit b1eb7df79db5aa668e9ca9eb63035c3412887330
+Author: Thao Nguyen <63916162+ithao252@users.noreply.github.com>
+Date:   Wed Dec 21 16:53:10 2022 +0700
+
+    Update README.md
+
+commit 74d4df2c7f5d6c61d230e5f84046baf445fcbea6
+Author: Thao Nguyen <63916162+ithao252@users.noreply.github.com>
+Date:   Wed Dec 21 16:47:19 2022 +0700
+
+    Update README.md
+
+commit e64d97463df8db7f713cc4eeaf24d142034dfa7a
+Author: Thao Nguyen <63916162+ithao252@users.noreply.github.com>
+Date:   Wed Dec 21 16:46:39 2022 +0700
+
+    .env file
+
+commit 2f57c74b08ab0a95b9d323d1d3bed28b42f93a4f
+Author: Thanh Thảo <thanhthaothaothao2@gmail.com>
+Date:   Wed Dec 21 16:42:17 2022 +0700
+
+    test mailer
+
+commit ff877b07b21fb3221c4b9a6e35ba285ce9f6effe
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Dec 21 03:26:45 2022 +0700
+
+    InternalTranfer
+    
+    Done OTP service, create internal tranfer and save transaction v.1.0
+
+commit 336b9f8910e0d8bfe5f40aca9cd6173b5a8664e0
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Wed Dec 21 03:21:57 2022 +0700
+
+    MODEL
+    
+    Change some place in model's component
+
+commit d1a5ee968a0f7cd7293499b3e7d63ea7dbf84461
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Tue Dec 20 22:55:06 2022 +0700
+
+    Beneficiary
+    
+    Change params of get route and change remindedName to reminiscentName in
+    model v.1.2
+
+commit be607bc7ff83d5dca02a527a1833e7a05c630755
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Mon Dec 19 16:11:05 2022 +0700
+
+    Beneficiary
+    
+    Update Beneficiary's service v.1.1
+
+commit a92884691aa904ba6e7aa9f58cdff06f7d7c3511
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Mon Dec 19 14:29:23 2022 +0700
+
+    MODEL
+    
+    Modify some place in model's component
+
+commit 26239b331be01e57093418e9d27b1e4c68b8271b
+Merge: 0c75eb3 074df36
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Mon Dec 19 13:12:11 2022 +0700
+
+    Merge branch 'develop'
+
+commit 074df3660ed10d5ed1efa92dc74160c937670c01
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Dec 18 19:53:38 2022 +0700
+
+    create and update schema
+
+commit 0c75eb35aa5f9b78bb2893eb884ce84b509a3268
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Dec 15 22:55:48 2022 +0700
+
+    update code
+
+commit f5b72cf9658e83161432291a5e727b32e76c8aaf
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Dec 15 22:52:40 2022 +0700
+
+    create verify Account API
+
+commit 5bfc75fe43621c4ca8d2eee9525cfd64c23cdb90
+Author: leleeeee <huynhducle20000@gmail.com>
+Date:   Thu Dec 15 12:55:04 2022 +0700
+
+    create API get info by account number
+
+commit db11b914efbcd5c53c925e5150f27cf23c03d4fe
+Author: Toàn <contact.pmtoan@gmail.com>
+Date:   Thu Dec 15 11:29:01 2022 +0700
+
+    Beneficiary
+    
+    Done CURD API call and document v.1.0
+
+commit ccb7e654788e0a5fddaeb6287d5543be79883a70
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Dec 11 19:57:23 2022 +0700
+
+    Update User.service.js
+
+commit d60345d5f00828bff00a880244819a922734bc8e
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Dec 11 19:50:58 2022 +0700
+
+    finish recovery password and change password
+
+commit 636ff69bf3f031f542050f703b086f463752fbcc
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Dec 11 15:58:06 2022 +0700
+
+    create API without docs
+    
+    - create User
+    - login
+    - get User info
+    - get list user
+
+commit e3301a60124fb533850b237e7676ec66948a5668
+Merge: ef68b62 de4514b
+Author: leleeeee <48651329+leleeeee@users.noreply.github.com>
+Date:   Sun Dec 11 10:46:24 2022 +0700
+
+    Merge pull request #1 from Web-Advanced-HCMUS/develop
+    
+    Update User.model.js
+
+commit de4514b5929c840806a70141656dfcbb915a651c
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Sun Dec 11 10:45:31 2022 +0700
+
+    Update User.model.js
+
+commit ef68b625b5ca303e469511592722fe1a705b120d
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Dec 8 23:25:55 2022 +0700
+
+    config nodemailer and mongoose connection
+
+commit d5fba9967a0265e0ebef89c8fb5d8ef94dd9680b
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Thu Dec 8 15:39:17 2022 +0700
+
+    add api docs validation
+
+commit 253f25d8ab2f63aa2f82f16abb97c357db26e3b2
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Dec 7 01:05:52 2022 +0700
+
+    change eslint config
+
+commit ee40a85c5d58a5f998b891198c2dc1cacb4c83a9
+Author: Huynh.Duc.Le <huynhducle20000@gmail.com>
+Date:   Wed Dec 7 00:55:18 2022 +0700
+
+    init BE
+
+commit ecd87c54bf3533cbba9e38de5ad3d7e8dcfaa4ef
+Author: Phan Minh Toàn <92153000+pmtoan@users.noreply.github.com>
+Date:   Sun Dec 4 22:12:29 2022 +0700
+
+    Initial commit
