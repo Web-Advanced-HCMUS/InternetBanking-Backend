@@ -125,15 +125,15 @@ export async function createUserService(auth, body) {
       };
 
       // Generate OTP
-      const otp = await generateOTPService(userId);
+      // const otp = await generateOTPService(userId);
 
-      await nodeMailerSendEmail(
-        'Banking Recovery Auto Mail',
-        email,
-        null,
-        'Create Account Confirmation OTP',
-        createAccountOTPMail(body?.fullName, otp)
-      );
+      // await nodeMailerSendEmail(
+      //   'Banking Recovery Auto Mail',
+      //   email,
+      //   null,
+      //   'Create Account Confirmation OTP',
+      //   createAccountOTPMail(body?.fullName, otp)
+      // );
 
       await Promise.all([
         UserLoginModel.create(clientLoginSchema),

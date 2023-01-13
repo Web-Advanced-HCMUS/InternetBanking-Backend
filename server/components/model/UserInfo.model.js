@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const UserInfoSchema = new mongoose.Schema({
-  isActivated: { type: Boolean, default: false },
+  isActivated: { type: Boolean, default: true },
   fullName: { type: String, require: true },
   gender: { type: String, require: true },
   phone: { type: String, require: true },
