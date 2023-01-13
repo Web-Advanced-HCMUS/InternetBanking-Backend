@@ -18,7 +18,9 @@ const {
 } = process.env;
 
 const app = new Express();
-app.use(cors({credentials: true, origin: '*'}));
+app.use(cors({
+  credentials: true, origin: ['http://localhost:5000', '*']
+}));
 app.use(
   morgan((tokens, req, res) => {
     const responeMess = [
