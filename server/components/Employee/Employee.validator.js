@@ -11,7 +11,7 @@ export const getRechargeInfoValidator = [
 ];
 
 export const addAccountValidator = [
-  body('identityCard').isString().notEmpty().withMessage('Identity must be String!'),
+  body('userInfo').isString().notEmpty().withMessage('Identity must be String!'),
   body('accountType').isIn(Object.keys(ACCOUNT_TYPE)).withMessage(`Type must be one of ${Object.keys(ACCOUNT_TYPE).join(', ')}`),
   validatorErrorHandler
 ];

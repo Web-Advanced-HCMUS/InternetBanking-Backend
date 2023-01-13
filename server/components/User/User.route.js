@@ -13,11 +13,11 @@ router.route('/refresh-token')
     UserInfoController.refreshTokenController
   );
 
-router.route('/verify-account')
-  .get(
-    UserInfoValidator.getUserIdValidator,
-    UserInfoController.createAccountOTPVerifyController
-  );
+// router.route('/verify-account')
+//   .get(
+//     UserInfoValidator.getUserIdValidator,
+//     UserInfoController.createAccountOTPVerifyController
+//   );
 
 router.route('/login')
   .post(

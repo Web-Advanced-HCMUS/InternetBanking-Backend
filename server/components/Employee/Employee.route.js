@@ -18,12 +18,12 @@ router.route('/create')
     UserInfoController.createUserController
   );
 
-router.route('/add-payment-account')
-  .post(
-    isEmployee(),
-    EmployeeValidator.addAccountValidator,
-    EmployeeController.addPaymentAccountController
-  );
+// router.route('/add-payment-account')
+//   .post(
+//     isEmployee(),
+//     EmployeeValidator.addAccountValidator,
+//     EmployeeController.addPaymentAccountController
+//   );
 
 router.route('/customer-recharge')
   .post(

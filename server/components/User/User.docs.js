@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   - name: User
- *     description: API about User management (include Employee)
+ *     description: API about User management (All Employee role can use these)
  */
 
 /**
@@ -305,89 +305,82 @@
  *         description: data report
  *         schema:
  *           type: object
- *           properties:
- *             $ref: '#/definitions/dashboard'
- *           example:
- *            success:
- *              type: boolean
- *              example: true
- *            totalPage:
- *              type: integer
- *              format: int32
- *              example: 5
- *            totalItem:
- *              type: integer
- *              format: int32
- *              example: 13
- *            page:
- *              type: integer
- *              format: int32
- *              example: 1
- *            item:
- *              type: integer
- *              format: int32
- *              example: 3
- *            payload:
- *              type: array
- *              items:
- *                type: object
- *                properties:
- *                  _id:
- *                    type: string
- *                    example: 63a1e5e01b88dd229b4d2ebb
- *                  userId:
- *                    type: object
- *                    properties:
- *                      _id:
- *                        type: string
- *                        example: 63a1e50b1b88dd229b4d2eb5
- *                      isActived:
- *                        type: boolean
- *                      fullName:
- *                        type: string
- *                        example: Messi
- *                      gender:
- *                        type: string
- *                        example: male
- *                      phone:
- *                        type: string
- *                        example: 0989283236
- *                      identityCard:
- *                        type: string
- *                        example: 3874340017
- *                      dateOfBirth:
- *                        type: string
- *                        example: 1988/01/20
- *                      email:
- *                        type: string
- *                        example: minhtoan2820012@gmail.com
- *                      address:
- *                        type: string
- *                        example: 221B Baker street
- *                      createDate:
- *                        type: string
- *                        example: 2022-12-11T11:53:39.695Z
- *                      lastUpdate:
- *                        type: string
- *                        format: nullable
- *                  currentBalance:
- *                    type: integer
- *                    format: int32
- *                    example: 1000
- *                  openingDate:
- *                    type: string
- *                    example: 2022-12-11T11:53:39.695Z
- *                  accountNumber:
- *                    type: string
- *                    example: 9021762999999
- *                  accountType:
- *                    type: string
- *                    example: payment
- *                  accountOwnerName:
- *                    type: string
- *                    example: Messi
- *                  isClosed:
- *                    type: boolean
+ *           example: {
+ *              "success": true,
+ *              "totalPage": 7,
+ *              "totalItem": 19,
+ *              "page": 1,
+ *              "item": 3,
+ *              "payload": [
+ *                {
+ *                  "_id": "63a1e5e01b88dd229b4d2ebb",
+ *                  "userId": {
+ *                    "_id": "63a1e50b1b88dd229b4d2eb5",
+ *                    "isActived": true,
+ *                    "fullName": "Messi",
+ *                    "gender": "male",
+ *                    "phone": "0989283236",
+ *                    "identityCard": "3874340017",
+ *                    "dateOfBirth": "1988/01/20",
+ *                    "email": "minhtoan2820012@gmail.com",
+ *                    "address": "221B, Baker street",
+ *                    "createDate": "2022-12-11T11:53:39.695Z",
+ *                    "lastUpdate": null
+ *                  },
+ *                  "currentBalance": 1000,
+ *                  "openingDate": "2022-12-11T11:53:39.695Z",
+ *                  "accountNumber": "9021762999999",
+ *                  "accountType": "payment",
+ *                  "accountOwnerName": "Messi",
+ *                  "isClosed": false
+ *                },
+ *                {
+ *                  "_id": "63b549ec14f4578d5395f30d",
+ *                  "userId": {
+ *                    "_id": "63a1e6dc1b88dd229b4d2ec9",
+ *                    "isActived": true,
+ *                    "fullName": "Ronaldo",
+ *                    "gender": "male",
+ *                    "phone": "0989283236",
+ *                    "identityCard": "3874340017",
+ *                    "dateOfBirth": "1988/01/20",
+ *                    "email": "ronaldo@gmail.com",
+ *                    "address": "221B, Baker street",
+ *                    "createDate": "2022-12-11T11:53:39.695Z",
+ *                    "lastUpdate": null
+ *                  },
+ *                  "currentBalance": 640005,
+ *                  "openingDate": "2022-12-11T11:53:39.695Z",
+ *                  "accountNumber": "9021762797979",
+ *                  "accountType": "payment",
+ *                  "accountOwnerName": "Ronaldo",
+ *                  "isClosed": true
+ *                },
+ *                {
+ *                  "_id": "63bc210653b60d7b62e42b73",
+ *                  "userId": {
+ *                    "_id": "63bc210453b60d7b62e42b6d",
+ *                    "isActivated": true,
+ *                    "fullName": "John Cena",
+ *                    "gender": "male",
+ *                    "phone": "0989283222",
+ *                    "identityCard": "5867844031",
+ *                    "dateOfBirth": "1988/01/20",
+ *                    "email": "glf54715@xcoxc.com",
+ *                    "address": "221B, Baker street",
+ *                    "createDate": "2023-01-09T14:13:01.249Z",
+ *                    "lastUpdate": null
+ *                  },
+ *                  "openingDate": "2023-01-09T14:13:01.203Z",
+ *                  "currentBalance": 9100100,
+ *                  "accountOwnerName": "John Cena",
+ *                  "accountNumber": "087889399",
+ *                  "createBy": "63ba9d111ac8424b927a423e",
+ *                  "accountType": "USER",
+ *                  "isClosed": false
+ *                }
+ *              ]
+ *            }
  *       404:
  *         description: When data cannot be process
  *         schema:
@@ -430,10 +423,9 @@
  *         description: data report
  *         schema:
  *           type: object
- *           properties:
- *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
+ *              success: true,
+ *              payload: true
  *           }
  *       404:
  *         description: When data cannot be process
@@ -490,7 +482,8 @@
  *           properties:
  *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
+ *              success: true,
+ *              payload: true
  *           }
  *       404:
  *         description: When data cannot be process
@@ -544,7 +537,8 @@
  *           properties:
  *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
+ *              success: true,
+ *              payload: true
  *           }
  *       404:
  *         description: When data cannot be process
@@ -588,11 +582,14 @@
  *         description: data report
  *         schema:
  *           type: object
- *           properties:
- *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
- *           }
+ *              "success": true,
+ *              "payload": {
+ *                "_id": "63a1e5e01b88dd229b4d2ebb",
+ *                "accountNumber": "9021762999999",
+ *                "accountOwnerName": "Messi"
+ *              }
+ *            }
  *       404:
  *         description: When data cannot be process
  *         schema:
@@ -638,7 +635,8 @@
  *           properties:
  *             $ref: '#/definitions/dashboard'
  *           example: {
- *              success: true
+ *              success: true,
+ *              payload: true
  *           }
  *       404:
  *         description: When data cannot be process
