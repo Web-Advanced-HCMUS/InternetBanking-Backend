@@ -11,6 +11,14 @@ import * as AccountService from '../Account/Account.service.js';
 import { BANK_CODE, FEE_PAID_TYPE, TRANSACTION_STATUS, TRANSACTION_TYPE } from '../../utils/constant.js';
 import { genHmacVerifyExternalCall, genHmacSWENBank } from '../../helper/signHmac.js';
 
+export async function getList() {
+  try {
+    return await InterbankModel.find();
+  } catch (error) {
+    throw new APIError(error.statusCode || error.code || 500, error.message);
+  }
+}
+
 function getDataConfirmationString(data) {
   const keys = ['bankCode', 'transactionType', 'amount', 'fee', 'content', 'time', 'status'];
   const sortKeys = [];

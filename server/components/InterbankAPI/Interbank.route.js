@@ -9,6 +9,7 @@ router.get('/get-account/:accountNumber', verifyTokenUsingSecretKey(), Interbank
 router.post('/rsa-deposit', verifyTokenUsingSecretKey(), rsaDepositValidator, InterbankController.rsaDeposit);
 
 router.get('/get-account-external/:accountNumber', authorized(), InterbankController.getAccountExternal);
+router.get('/get-bank-list', authorized(), InterbankController.getBankList);
 router.post('/rsa-transfer', authorized(), rsaTransferValidator, InterbankController.rsaTransfer);
 
 router.get('/generate-key-pair', InterbankController.getKeyPair);

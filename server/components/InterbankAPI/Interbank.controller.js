@@ -4,6 +4,18 @@ import APIError from '../../utils/APIError.js';
 import { HandleRequest } from '../../utils/HandleRequest.js';
 import * as AccountController from '../Account/Account.controller.js';
 
+export async function getBankList(req, res, next) {
+    try {
+        const [err1, data] = await HandleRequest(InterbankService.getList());
+        if (err1) throw new APIError(err1.statusCode, err1.message);
+
+        return res.RH.success(data);
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 export async function getAccount(req, res, next) {
     await AccountController.getAccount(req, res, next);
 }
