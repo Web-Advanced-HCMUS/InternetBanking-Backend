@@ -25,7 +25,7 @@ export async function createInterbankTransferTransaction(responseTransaction) {
     const feePaymentMethod = responseTransaction.fee > 0 ? FEE_PAID_TYPE.PAID_RECEIVER : FEE_PAID_TYPE.PAID_SENDER;
     const [err1, receiverResult] = await HandleRequest(AccountService.subtractMoneyFromAccount(
         responseTransaction.fromAccountNumber,
-        responseTransaction.amount + responseTransaction.fee
+        Number(responseTransaction.amount) + Number(responseTransaction.fee)
     ));
 
     const [err2, transaction] = await HandleRequest(TransactionModel.create({ ...responseTransaction, feePaymentMethod }));
@@ -42,7 +42,7 @@ export async function createInterbankDepositTransaction(data, signature) {
     const feePaymentMethod = data.fee > 0 ? FEE_PAID_TYPE.PAID_RECEIVER : FEE_PAID_TYPE.PAID_SENDER;
     const [err1, receiverResult] = await HandleRequest(AccountService.addMoneyToAccount(
         data.toAccountNumber,
-        data.amount - data.fee
+        Number(data.amount) - Number(data.fee)
     ));
 
     const acceptTransaction = {
@@ -75,7 +75,7 @@ export async function createInternalTransaction(data) {
       const senderFee = data.feePaymentMethod === FEE_PAID_TYPE.PAID_SENDER ? data.fee : 0;
       const [err, senderResult] = await HandleRequest(AccountService.subtractMoneyFromAccount(
           data.fromAccountNumber,
-          data.amount + senderFee
+          Number(data.amount) + Number(senderFee)
       ));
       if (err) throw new APIError(err.statusCode, err.message);
       if (senderResult.modifiedCount === 0) throw new APIError(500, 'Error occur while operating transaction');
@@ -83,7 +83,7 @@ export async function createInternalTransaction(data) {
       const receiverFee = data.feePaymentMethod === FEE_PAID_TYPE.PAID_RECEIVER ? data.fee : 0;
       const [err2, receiverResult] = await HandleRequest(AccountService.addMoneyToAccount(
           data.toAccountNumber,
-          data.amount - receiverFee
+          Number(data.amount) - Number(senderFee)
       ));
       if (err2) throw new APIError(err2.statusCode, err2.message);
       if (receiverResult.modifiedCount === 0) throw new APIError(500, 'Error occur while operating transaction');
