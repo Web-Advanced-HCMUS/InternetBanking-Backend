@@ -14,6 +14,10 @@ export async function getList(userId) {
 
 export async function insertOne(info) {
   try {
+    const beneficiary = await BeneficiaryModel.findOne({ accountNumber: info.accountNumber });
+
+    if (beneficiary) return beneficiary;
+    
     return await BeneficiaryModel.create({ ...info, userId: new mongoose.Types.ObjectId(info.userId) });
   } catch (error) {
     throw new APIError(500, error.message);
