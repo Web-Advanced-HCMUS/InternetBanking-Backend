@@ -4,9 +4,9 @@ import { errorMessage } from '../../utils/error.js';
 import BeneficiaryModel from '../model/Beneficiary.model.js';
 import APIError from '../../utils/APIError.js';
 
-export async function getList(customerId) {
+export async function getList(userId) {
   try {
-    return await BeneficiaryModel.find({ customerId });
+    return await BeneficiaryModel.find({ userId });
   } catch (error) {
     throw new APIError(500, error.message);
   }
