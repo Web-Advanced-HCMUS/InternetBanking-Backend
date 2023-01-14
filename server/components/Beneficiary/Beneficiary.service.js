@@ -14,7 +14,7 @@ export async function getList(userId) {
 
 export async function insertOne(info) {
   try {
-    const beneficiary = await BeneficiaryModel.findOne({ accountNumber: info.accountNumber });
+    const beneficiary = await BeneficiaryModel.findOne({ userId: info.userId, accountNumber: info.accountNumber });
 
     if (beneficiary) return beneficiary;
     
